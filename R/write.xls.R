@@ -1,4 +1,5 @@
 "write.xls" <-
-function( x, file, colNames = TRUE, sheet = 1, from = 1 ) {
-  invisible( .Call( "WriteXls", x, file, sheet, colNames, from - 1 ) )
+function( x, file, colNames = TRUE, sheet = 1, from = 1, rowNames = NA ) 
+{
+    invisible( .Call( "WriteXls", x, file, colNames, sheet, from - 1, rowNames ) )
 }

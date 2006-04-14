@@ -1,76 +1,47 @@
 
---------------------------------------------------------------------------------
-Compile from sources, technical details and contact address.
---------------------------------------------------------------------------------
+= README =
 
 
--- COMPILE FROM SOURCE
+== COMPILE FROM SOURCE ==
 
-DELPHI
-As you probably know, this package is written in Delphi (PASCAL). If you don't 
-have Delphi you can download it from http://www.turboexplorer.com. These brandnew 
-and free (wow!!) Turbos are almost* identical to the BDS version which I use.
-(*you cannot install third party components in the IDE, this is not relevant here)
+=== Delphi ===
+This package has been written in Object Pascal with Delphi 2007. If you don't have 
+Delphi, you should be able to use the free Turbo version (http://www.turboexplorer.com).
 
-LICENSE
-My own code is licensed under GPLv2 with an exception to allow you to link the 
-non-free component library Flexcel (see inst/License). In order to compile the
-xlsReadWrite.dll from source you need a developer license of this libray. It 
-costs € 75.- (for the VCL version) and is available here: http://www.tmssoftware.com/.
-I have no connection with this company apart from being a customer.
+=== Flexcel library ===
+My own code is free (GPLv2 with exception, see inst/License) but I made also use of a 
+third party component (Flexcel) which I am not allowed to distribute in source form. 
+To compile xlsReadWrite.dll from source you will need a developer license of this libray. 
+It currently costs € 75.= and is available here: http://www.tmssoftware.com/. I have no 
+connection with this company apart from being a customer.
 
-CHANGES
+=== Changes in flexcel ===
 In Flexcel I made the following (small) changes:
-- TFlexCelImport and TXLSAdapter are derived from TObject instead of TComponent.
-  (Change this and also adapt the correspondending Create methods).
-- In the unit UXlsSST, line 560, I added the line
-  "if aSSTRecord.Count > 0 then  // line added by chappi"
-  before "for i:=0 to aSSTRecord.Count-1 do" to avoid a range check error
-- In the unit UXlsCellRecords, I surrounded the line 205 as follow:
-  {$R-}  // chappi, avoid a range check error.
-    pd^:= Rk^ and $fffffffc;
-  {$R+}  // chappi
-  [This is probably ok, but if ever there should be strange errors, check this...]
-- In the unit UXlsXF, I surrounded the line 388 as follow:
-  {$R-}  // chappi, avoid a range check error.
-  Result:=(GetLongWord(Data, aPos) shr FirstBit) and $7F-7;
-  {$R+}  // chappi
-  [This is probably ok, but if ever there should be strange errors, check this...]
-- Flexcel has quite a lot of different folders. I just copied all .pas, .inc and
-  .res files in a single folder (set a path to this folder in Delphi).
+ * TFlexCelImport and TXLSAdapter are derived from TObject instead of TComponent.
+   (adapt the correspondending Create methods).
+ * Flexcel has quite a lot of different folders. I just copied all .pas, .inc and
+   .res files in a single folder and set a path to this folder in Delphi.
 
 
--- TECHNICAL DETAILS
+== SOME DETAILS ==
 
-To be able to use Delphi for "R-Package-Writing" I had to translate C headers 
-to Pascal. This is a separate project (RHeaders4Delphi) and can be downloaded on 
-the treetron.googlepages website. The code is licensed under GPLv2.
+In order to make R packages with Delphi I had to translate the (LGPL'ed) C header 
+files to pascal interface units. This is a separate project (RHeaders4Delphi) and 
+can be downloaded on the treetron.googlepages website.
 
-My experience shows that Delphi works very well in conjunction with R. The big 
-problem however is, that Delphi doesn't have crossplatform support.
+My experience shows that Delphi works very well in conjunction with R. It's great 
+fun, easy to debug and pascal code doesn't hurt they eyes...
 
-[Theoretically this can be addressed with the FreePascal compiler. Unfortunatly 
-I only had some small partial success, even if I tried for about 2 days. Now it's
-on hold, as I currently don't have a personal need to read Excelfiles on the Linux 
-platform and am not ready to invest more time in it. If someone is interested to 
-help or is ready to (partly) commission such a development, please ask. It certainly 
-would be great to have a crossplatform version of xlsReadWrite!]
-
-[Another solution would be to use Kylix. If someone has Kylix (and Flexcel) it should
-be possible to compile xlsReadWrite straight away for Linux. (I don't have a Kylix
-license and will maybe consider to build a Linux-Kylix-version if someone sponsors the
-cost of the license (a hefty $249 for a classic (euphemism for eol) product). Kylix only
-supports very old Linux distributions and I won't give guarantees that I will succeed).]
+Unfortunately Delphi doesn't have direct crossplatform support. I would have to
+do a Linux port using Kylix or FreePascal. If someone of you has such a need and 
+would be ready to (partly) act as a sponsor, it probably will happen sooner!
+A Mac port could be done but is unlikely to happen without external funding.
 
 
--- CONTACT
+== CONTACT ==
 
 Info and Downloads: http://treetron.googlepages.com/
-Support: http://groups.google.ch/group/supportR
-Mail: gchappi@gmail.com
+Email: gchappi@gmail.com
 
-Treetron GmbH, Umweltinformatik
-Badenerstrasse 18, CH-8004 Zürich, Switzerland
-Hans-Peter Suter
-<firstname>.<lastname>@treetron.ch
-Tel +41(1)242 22 55
+Hans=Peter Suter (<firstname>.<lastname>@treetron.ch)
+Treetron GmbH, Umweltinformatik, Badenerstrasse 18, CH=8004 Zürich, Switzerland

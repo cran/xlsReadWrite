@@ -2,8 +2,8 @@ unit xlsUtils;
 
 { Helpers.
                               ---
-  The contents of this file may be used under the terms of the GNU General 
-  Public License Version 2 (the "GPL"). As a special exception I (copyright 
+  The contents of this file may be used under the terms of the GNU General
+  Public License Version 2 (the "GPL"). As a special exception I (copyright
   holder) allow to link against flexcel (http://www.tmssoftware.com/flexcel.htm).
                               ---
   The software is provided in the hope that it will be useful but without any
@@ -23,12 +23,21 @@ type
   ExlsReadWrite = class( Exception );
 
   aOutputType = ( otUndefined, otDouble, otInteger, otLogical
-                , otCharacter, otDataFrame );
-const
-  theOutputType: array[aOutputType] of string
-                 = ( 'undefined', 'double', 'integer', 'logical'
-                   , 'character', 'data.frame' );
+                , otCharacter, otDataFrame, otNumeric );
+  aRowNameKind =( rnNA, rnTrue, rnFalse, rnSupplied );
 
+const
+  TheNAString =     'NA';   // see remark in pro vesion
+  TheNaNString =    'NaN';
+
+  TheOutputType: array[aOutputType] of string
+                 = ( 'undefined', 'double', 'integer', 'logical'
+                   , 'character', 'data.frame', 'numeric' );
+  TheRowNameKind:array[aRowNameKind] of string
+                 = ( 'NA', 'True', 'False', 'Supplied' );
+
+function DateTimeToStrFmt( const _format: string; _dateTime: TDateTime ): string;
+                 
 function StrToOutputType( const _type: string ): aOutputType;
 function AllOutputTypes(): string;
 
@@ -47,11 +56,21 @@ function GetFileVersion( const FileName : string;
     var Description : string ) : boolean;
 function ReplaceVersionAndBuild( const _s: string ): string;
 
+
+function GetScalarString( _val: pSExp; const _err: string ): string;
+
+function AsFactor( _val: pSExp ): pSExp; cdecl;
+function MakeNames( _names: pSExp ): pSExp; cdecl;
+
 {==============================================================================}
 implementation
 uses
   Windows, Variants;
 
+function DateTimeToStrFmt( const _format: string; _dateTime: TDateTime ): string;
+  begin
+    DateTimeToString( result, _format, _dateTime );
+  end;
 
 function StrToOutputType( const _type: string ): aOutputType;
   var
@@ -262,5 +281,32 @@ function ReplaceVersionAndBuild( const _s: string ): string;
     result:= StringReplace( _s, '@version@', v, [] );
     result:= StringReplace( result, '@build@', b, [] );
   end;
+
+function GetScalarString( _val: pSExp; const _err: string ): string;
+  begin
+    if riIsString( _val ) and (riLength( _val ) = 1) then begin
+      result:= riChar( riStringElt( _val, 0 ) );
+    end else begin
+      raise ExlsReadWrite.Create( _err );
+    end;
+  end;
+
+function AsFactor( _val: pSExp ): pSExp; cdecl;
+  var
+    fcall: pSExp;
+  begin
+    fcall:= riProtect( riLang2( riInstall( 'as.factor' ), _val ) );
+    result:= riProtect( riEval( fcall, RGlobalEnv ) );
+    riUnprotect( 2 );
+  end {AsFactor};
+
+function MakeNames( _names: pSExp ): pSExp; cdecl;
+  var
+    fcall: pSExp;
+  begin
+    fcall:= riProtect( riLang2( riInstall( 'make.names' ), _names ) );
+    result:= riProtect( riEval( fcall, RGlobalEnv ) );
+    riUnprotect( 2 );
+  end {MakeNames};
 
 end {xlsUtils}.

@@ -1,60 +1,77 @@
 \name{read.xls}
 \alias{read.xls}
-\title{Data Input}
+\title{Read Excelfiles}
 
 \description{
-  Natively reads an Excelsheet and creates a data.frame or a matrix from it.
-  The supported format is BIFF8, i.e. Excel v97-2003.
+  Reads an Excelsheet and returns a data.frame or a matrix. 
+  Supported is the native BIFF8 file format, i.e. Excel 97-2003.
 }
 
 \usage{
-  read.xls( file, colNames = TRUE, sheet = 1, type = "data.frame",
-          from = 1, colClasses = NA )
+read.xls( file, 
+          colNames = TRUE, 
+          sheet = 1, 
+          type = "data.frame",
+          from = 1, 
+          rowNames = NA, colClasses = NA, checkNames = TRUE, 
+          dateTimeAs = "numeric", 
+          stringsAsFactors = default.stringsAsFactors() )
 }
 
 \arguments{
-  \item{file}{the name of the local file to read from.}
-  \item{colNames}{indicates if there is a header row in Excel. Either a logical
-    value or a character vector with user defined column names. With \code{TRUE}
-    the argument \code{from} denotes the header row otherwise the first data row.}
-  \item{sheet}{to read from. Either a number (starting from 1) or a character
-    string naming the sheet.}
-  \item{type}{specifies the type of the return value. Either \code{data.frame}
-    or the entries \code{double}, \code{integer}, \code{logical} or
-    \code{character} which all give back a matrix.}
-  \item{from}{specifies the first row to start reading. Depending on the value
-    of \code{colNames} this is the header row or the first data row. (Slightly
-    different from the pro version where the upper left corner (row/col) can be
-    indicated).}
-  \item{colClasses}{A scalar or a vector of classes to be assumed for the
-    columns. Possible values are \code{double}, \code{integer}, \code{logical},
-    \code{character}and \code{factor}. With \code{NA} the default conversion
-    will be used. \code{rowname} can be written for the first column to use
-    it for the rownames (note: this is only possible for the first column).}
+  \item{file}{the name of a file. If it does not contain an absolute path, the 
+    file name is relative to the current working directory.}
+  \item{colNames}{a character vector or a logical. \code{TRUE} takes a title row
+    from the spreadsheet. The default is "V" followed by the column number.}
+  \item{sheet}{to read from. A case sensitive character string or a number.}
+  \item{type}{the type of the returned value. Either \code{data.frame} or - 
+    for matrices - \code{double}, \code{integer}, \code{logical} or \code{character}.}
+  \item{from}{the starting row to read from.}
+  \item{rowNames}{a character vector with the actual row names or \code{TRUE} to 
+    use the first Excel column. 
+    
+    With \code{NA} the first column will be considered to contain row names 
+    under two conditions: 1) \code{colNames} is \code{TRUE} or contains a character 
+    vector and 2) the first column name thereof is an empty string.}
+  \item{colClasses}{the class of the data.frame columns. Possible entries are: 
+    \code{double}, \code{numeric}, \code{integer}, \code{logical}, \code{character}, 
+    \code{factor}, \code{NA},  \code{isodate}, \code{isotime} and \code{isodatetime}. 
+    A scalar entry will be recycled if necessary.
+
+    \code{isodate} retrieves a "YYYY-MM-DD", \code{isotime} a "hh:mm:ss" and 
+    \code{isodatetime} a "YYYY-MM-DD hh:mm:ss" character string.
+    
+    With \code{NA} a suitable column type will be determined based on the 
+    \emph{first non-empty entry} of the first 16 rows of the Excelsheet.}
+  \item{checkNames}{with \code{TRUE} the colNames are guaranteed to be 
+    syntactically valid variable names (by \code{make.names}).}
+  \item{dateTimeAs}{controls how to determine a column class for columns which are 
+    formatted as date, time or datetime. Possible entries are: \code{numeric}
+    or \code{isodatetime}. Will be overruled by explicit \code{colClasses} arguments.}
+  \item{stringsAsFactors}{set to \code{FALSE} to retrieve plain characters. The
+    default follows the global option \code{default.stringsAsFactors()}.}
 }
 
 \details{
-  For data.frames the first column is taken for the rownames either if the first
-  entry in \code{colClasses} is \code{rowname} or if all of the following
-  conditions are met: - \code{colClasses} is NULL, - colNames is TRUE
-  or a vector where the first entry is empty and - the first entry of the
-  header row in the Excel table is empty.
+  The arguments \code{colNames} and/or \code{colClasses} can optionally include 
+  an entry for the rownames column (which will be discarded).
 }
 
 \value{
-  A data.frama or a matrix containing the data.
+  A data.frame or a matrix of the specified type.
 }
 
 \section{Pro version}{
-  There is/will be a Pro version which is formally supported and has some more
-  functionality, e.g. sheet handling (insert, copyAndInsert, select, delete and
-  rename), select Excel regions (columns, rows, cells) directly, append data,
-  work with multiple files at the same time, information about an Excelfile and
-  last but not least an oledatetime class and lots of datetime functions (BETA).
-
-  Why not check it out? xlsReadWritePro is free to try and most probably will
-  serve you well (it surely does so here for our work!). Further infos, updates,
-  bugfixes and support, please see: http://treetron.googlepages.com.
+  While the free version should be sufficient for most day-to-day duties, you have 
+  the opportunity to choose a more powerful pro version and at the same time support 
+  our development and maintenance effort. Additional features of xlsReadWritePro: \cr
+  - work with data area subsets, - use (named) ranges and pick individual cells, 
+  - work with sheets (copy, rename, delete), - read/write formula values, 
+  - insert images, - use oleDateTime classes and many datetime helper functions, 
+  - append data to existing files and - work with in-memory objects (e.g. to compose Excel reports). 
+  
+  The trial (http://treetron.googlepages.com) is free and the two versions can 
+  easily be switched and coexist just fine. So, why not check it out for yourself? 
 }
 
 \author{Hans-Peter Suter}

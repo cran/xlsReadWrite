@@ -26,19 +26,22 @@ procedure R_unload_xlsReadWrite( _info: pDllInfo ); cdecl;
 {==============================================================================}
 implementation
 uses
-  SysUtils, rhR, rhRInternals, xlsRead, xlsWrite;
+  SysUtils, rhR, rhRInternals, xlsRead, xlsWrite, xlsHelpR, xlsDateTime, DateUtils;
 
 { --------------------------------------------------------- R_init_<myLib> }
 
 procedure R_init_xlsReadWrite( _info: pDllInfo ); cdecl;
   const
-    theCallMethods: array[0..3] of aCallMethodDef
+    theCallMethods: array[0..4] of aCallMethodDef
                     = ( ( cadName: 'ReadXls'
                         ; cadFunc: @xlsRead.ReadXls
-                        ; cadNumArgs: 6 )
+                        ; cadNumArgs: 10 )
                       , ( cadName: 'WriteXls'
                         ; cadFunc: @xlsWrite.WriteXls
-                        ; cadNumArgs: 5 )
+                        ; cadNumArgs: 6 )
+                      , ( cadName: 'DateTimeXls'
+                        ; cadFunc: @xlsDateTime.DateTimeXls
+                        ; cadNumArgs: 3 )
                       , ( cadName: 'R_unload_xlsReadWrite'
                         ; cadFunc: @R_unload_xlsReadWrite
                         ; cadNumArgs: 1 )

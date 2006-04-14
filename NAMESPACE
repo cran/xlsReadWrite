@@ -1,3 +1,5 @@
 useDynLib( xlsReadWrite )
 
-export( read.xls, write.xls )
+export( read.xls, write.xls, 
+        dateTimeToStr, strToDateTime,
+        dateTimeToIsoStr, isoStrToDateTime )

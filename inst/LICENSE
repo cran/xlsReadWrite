@@ -1,16 +1,20 @@
+
+= LICENSE =
+
+
 xlsReadWrite
-Copyright (C) 2006, Hans-Peter Suter, Treetron, Switzerland.
+Copyright (C) 2006, 2007, Hans-Peter Suter, Treetron, Switzerland.
 All rights reserved.
 
-- This package including the pre-compiled dynamic library xlsReadWrite.dll
-  can be freely distributed and used for any purpose.
+ * This package including the pre-compiled dynamic library xlsReadWrite.dll
+   can be freely distributed and used for any purpose.
 
-- All components other than xlsReadWrite.dll are licensed under GPLv2 with
-  an additional exception to allow to link the non-free flexcel source code.
+ * All components other than xlsReadWrite.dll are licensed under GPLv2 with
+   an additional exception to allow to link the non-free flexcel source code.
 
-- The dynamic library xlsReadWrite.dll does qualify as a binary distribution
-  and contains binary code from the flexcel library which is used and distributed
-  under the license granted to Hans-Peter Suter, Treetron, Switzerland.
+ * The dynamic library xlsReadWrite.dll does qualify as a binary distribution
+   and contains binary code from the flexcel library which is used and distributed
+   under the license granted to Hans-Peter Suter, Treetron, Switzerland.
 
 The package is a non-free non-standard package (from an R point of view). It is 
 dynamically loaded into R and interfaces R only through LGPL'ed API header files. 

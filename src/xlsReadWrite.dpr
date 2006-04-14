@@ -1,7 +1,7 @@
 library xlsReadWrite;
 
-{ The contents of this file may be used under the terms of the GNU General 
-  Public License Version 2 (the "GPL"). As a special exception I (copyright 
+{ The contents of this file may be used under the terms of the GNU General
+  Public License Version 2 (the "GPL"). As a special exception I (copyright
   holder) allow to link against flexcel (http://www.tmssoftware.com/flexcel.htm).
                               ---
   The software is provided in the hope that it will be useful but without any
@@ -22,7 +22,9 @@ uses
   xlsRegister in 'xlsRegister.pas',
   xlsUtils in 'xlsUtils.pas',
   xlsWrite in 'xlsWrite.pas',
-  xlsRead in 'xlsRead.pas';
+  xlsRead in 'xlsRead.pas',
+  xlsHelpR in 'xlsHelpR.pas',
+  xlsDateTime in 'xlsDateTime.pas';
 
 var
   DllProcNext: procedure( _reason: integer ) = nil;
@@ -30,16 +32,16 @@ var
 const
   theStartupMsg =
     'xlsReadWrite version @version@ (Build @build@)' + #13#10 +
-    'Copyright (C) 2006, Hans-Peter Suter, Treetron, Switzerland.' + #13#10 +
+    'Copyright (C) 2007, Hans-Peter Suter, Treetron, Switzerland.' + #13#10 +
     '' + #13#10 +
     'This package can be freely distributed and used for any' + #13#10 +
     'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + #13#10 +
-    'Code written by myself is licensed under GPLv2 with an ' + #13#10 +
-    'exception to link certain proprietary code. See LICENSE.' + #13#10 +
+    'xlsReadWrite has been written with Delphi and contains' + #13#10 +
+    'code from a 3rd party library. Our own code is free (GPLv2).' + #13#10 +
     '' + #13#10 +
-    'Kindly travel to http://treetron.googlepages.com for' + #13#10 +
-    'infos, updates, the pro version, suggestions, support' + #13#10 +
-    'and YES, why not make a donation if it serves you well...' + #13#10#13#10;
+    'For feedback, bugreports, donations, updates and LBNL the' + #13#10 +
+    'xlsReadWritePro version, see http://treetron.googlepages.com.' + #13#10#13#10;
+
 
 procedure MyDllProc( _reason: integer );
   var
@@ -47,9 +49,9 @@ procedure MyDllProc( _reason: integer );
   begin
     case _reason of
       DLL_PROCESS_ATTACH: begin
-        loadok:= LoadRVars( ToRVarsArr( [vriRNilValue, vriRDimnamesSymbol,
+        loadok:= LoadRVars( ToRVarsArr( [vriRGlobalEnv, vriRNilValue, vriRDimnamesSymbol,
             vriRRowNamesSymbol, vriRNamesSymbol, vriRLevelsSymbol] ) );
-        if not LoadRVars( ToRVarsArr( [varRNaN, varRNaInt] ) ) then loadok:= False;
+        if not LoadRVars( ToRVarsArr( [varRNaN, varRNaInt, varRNaReal] ) ) then loadok:= False;
         if not loadok then begin
           rRprintf( 'Load xlsReadWrite.dll: Could not initialize RNilValue/RNaN' );
         end;
@@ -70,12 +72,14 @@ procedure MyDllProc( _reason: integer );
 
 exports ReadXls;
 exports WriteXls;
+exports DateTimeXls;
 
 exports R_init_xlsReadWrite;
 exports R_unload_xlsReadWrite;
 
 {==============================================================================}
-begin {InitializeDemo}
+
+begin
   DllProcNext:= pointer( InterlockedExchange( integer(@DllProc), integer(@MyDllProc) ));
   MyDllProc( DLL_PROCESS_ATTACH );
 end {xlsReadWrite}.
