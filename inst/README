@@ -1,0 +1,64 @@
+
+================================================================================
+Remarks on license, technical details, uninstallation and contact address.
+================================================================================
+
+
+=================
+License things
+
+xlsReadWrite is published under GPLv2 with an exception to link the non-free 
+component library Flexcel. This exception makes, that the package as a whole is 
+not GPL. To compile for yourself you have to buy the Flexcel code, but then, on 
+your own you go...
+
+xlsReadWrite*Pro* is a shareware package. To use it (after a trial period) you
+are obliged to register it for a (small) fee. While the source code is not
+generally available, it can be licensed also. Just ask.
+
+Both packages are (from an R POV) non-free non-standard packages. They interface
+R through LGPL'ed header files only and are in line with the explicit statement
+that non-free packages can exist and are tolerated (though not encouraged).
+
+
+=================
+Technical details
+
+Well, I am quite proud to tell, that these packages have been made with Delphi
+(a Pascal dialect) and not with the usual languages C (or C++ or Fortran).
+The Delphi-R interface is a separate project which is fully GPLv2 licensed and
+can be downloaded (RHeaders4Delphi.zip) on the treetron.googlepages website.
+
+My experience shows that it is easy to use Delphi in conjunction with R.
+The big problem however is, that Delphi doesn't have crossplatform support.
+It could be addressed with the FreePascal compiler, which I tried out for
+2 days and had some partial success. But as I currently don't have a personal
+need to read Excelfiles on the Linux platform this has to wait. If someone
+is interested in this and ready to commission such a development, please ask.
+I certainly would be interested to make this library a crossplatform thing.
+
+
+=================
+Uninstall xlsReadWrite*Pro*
+
+To uninstall xlsReadWritePro just delete the folder <R_HOME>/library/xlsReadWritePro. 
+There is an entry (HKCU\Software\Classes\CLSID\{BC056A6C-8CAD-4F9D-9523-44611EB835F7) 
+in the registry which is used for the trial period. You can leave it there (it doesn't 
+do any harm) or you can delete this key manually with the regedit tool. The entry does
+contain a subfolder "Info" with (normally) 3 Keys (D1, D2, D3). Check if this is correct
+and don't delete the key if not. WARNING: only use the regedit tool and/or modify the 
+registry if you know how this works, inappropriate use can damage your system.
+
+
+=================
+Contact
+
+Downloads (temp): http://treetron.googlepages.com/
+Support: http://groups.google.ch/group/supportR
+Mail: gchappi@gmail.com
+
+Treetron GmbH, Umweltinformatik
+Badenerstrasse 18, CH-8004 Zürich, Switzerland
+Hans-Peter Suter
+<firstname>.<lastname>@treetron.ch
+Tel +41(1)242 22 55

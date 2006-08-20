@@ -1,0 +1,3 @@
+useDynLib( xlsReadWrite )
+
+export( read.xls, write.xls )

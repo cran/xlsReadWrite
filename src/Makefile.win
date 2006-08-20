@@ -1,0 +1,4 @@
+# This is just a dummy makefile to prevent warnings
+# To compile the code, please see README.txt
+
+all:
