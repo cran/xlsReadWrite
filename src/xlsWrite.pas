@@ -71,10 +71,14 @@ procedure SelectOrInsertSheet();
 procedure WriteDouble(); cdecl;
   var
     r, c: integer;
+    valreal: double;
   begin
     for r := 0 to rowcnt - 1 do begin
       for c := 0 to colcnt - 1 do begin
-        writer.CellValue[r + 1 + offsetRow, c + 1]:= riReal( _data )[r + rowcnt*c];
+        valreal:= riReal( _data )[r + rowcnt*c];
+        if (rIsNA( valreal ) = 0) then begin
+          writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal;
+        end;
       end {for};
     end {for};
   end {WriteDouble};
@@ -82,10 +86,14 @@ procedure WriteDouble(); cdecl;
 procedure WriteInteger(); cdecl;
   var
     r, c: integer;
+    valint: integer;
   begin
     for r := 0 to rowcnt - 1 do begin
       for c := 0 to colcnt - 1 do begin
-        writer.CellValue[r + 1 + offsetRow, c + 1]:= riInteger( _data )[r + rowcnt*c];
+        valint:= riInteger( _data )[r + rowcnt*c];
+        if not (valint = RNaInt) then begin
+          writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
+        end;
       end {for};
     end {for};
   end {WriteInteger};
@@ -93,10 +101,14 @@ procedure WriteInteger(); cdecl;
 procedure WriteLogical(); cdecl;
   var
     r, c: integer;
+    valint: integer;
   begin
     for r := 0 to rowcnt - 1 do begin
       for c := 0 to colcnt - 1 do begin
-        writer.CellValue[r + 1 + offsetRow, c + 1]:= riLogical( _data )[r + rowcnt*c];
+        valint:= riLogical( _data )[r + rowcnt*c];
+        if not (valint = RNaInt) then begin
+          writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
+        end;
       end {for};
     end {for};
   end {WriteLogical};
@@ -119,8 +131,10 @@ procedure WriteDataframe(); cdecl;
     lev: array of pSExp;
     r, c: integer;
     myrownames: pSExp;
+    valint: integer;
+    valreal: double;
   begin
-    myrownames:= nil;                  
+    myrownames:= nil;
       { are there rownames which could become the first column }
     if colheadertype <> chtNone then begin
       myrownames:= riGetAttrib( _data, RRowNamesSymbol );
@@ -161,8 +175,10 @@ procedure WriteDataframe(); cdecl;
       for c:= integer(rowNameAsFirstCol) to colcnt - 1 + integer(rowNameAsFirstCol) do begin
         case coltypes[c - integer(rowNameAsFirstCol)] of
           setIntSxp: begin
-            writer.CellValue[r + 1 + offsetRow, c + 1]:=
-                riInteger( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            valint:= riInteger( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            if not (valint = RNaInt) then begin
+              writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
+            end;
           end;
           setCplxSxp: begin  // setCplxSxp used for factors (WARNING: levels 1-based, riStringElt 0-based)
             writer.CellValue[r + 1 + offsetRow, c + 1]:=
@@ -170,12 +186,16 @@ procedure WriteDataframe(); cdecl;
                 riInteger( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r] - 1 ) ));
           end;
           setRealSxp: begin
-            writer.CellValue[r + 1 + offsetRow, c + 1]:=
-                riReal( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            valreal:= riReal( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            if (rIsNA( valreal ) = 0) then begin
+              writer.CellValue[r + 1 + offsetRow, c + 1]:= valreal;
+            end;
           end;
           setLglSxp: begin
-            writer.CellValue[r + 1 + offsetRow, c + 1]:=
-                riLogical( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            valint:= riLogical( riVectorElt( _data, c - integer(rowNameAsFirstCol) ) )[r];
+            if not (valint = RNaInt) then begin
+              writer.CellValue[r + 1 + offsetRow, c + 1]:= valint;
+            end;
           end;
           setStrSxp: begin
             writer.CellValue[r + 1 + offsetRow, c + 1]:=

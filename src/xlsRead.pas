@@ -2,8 +2,8 @@ unit xlsRead;
 
 { Read functionality.
                               ---
-  The contents of this file may be used under the terms of the GNU General 
-  Public License Version 2 (the "GPL"). As a special exception I (copyright 
+  The contents of this file may be used under the terms of the GNU General
+  Public License Version 2 (the "GPL"). As a special exception I (copyright
   holder) allow to link against flexcel (http://www.tmssoftware.com/flexcel.htm).
                               ---
   The software is provided in the hope that it will be useful but without any
@@ -13,20 +13,20 @@ unit xlsRead;
   Copyright (C) 2006 by Hans-Peter Suter, Treetron GmbH, Switzerland.
   All rights reserved.
                               ---                                              }
-                              
+
 {==============================================================================}
 interface
 uses
   rhRInternals, rhTypesAndConsts;
 
-function ReadXls( _file, _sheet, _type, _colNames, _skipLines: pSExp ): pSExp; cdecl;
+function ReadXls( _file, _sheet, _type, _colNames, _skipLines, _colClasses: pSExp ): pSExp; cdecl;
 
 {==============================================================================}
 implementation
 uses
   SysUtils, Variants, Classes, xlsUtils, UFlexCelImport, XlsAdapter, rhR;
 
-function ReadXls( _file, _sheet, _type, _colNames, _skipLines: pSExp ): pSExp; cdecl;
+function ReadXls( _file, _sheet, _type, _colNames, _skipLines, _colClasses: pSExp ): pSExp; cdecl;
   var
     reader: TFlexCelImport;
     colcnt, rowcnt, offsetRow: integer;
@@ -59,20 +59,36 @@ procedure SelectSheet();
     end {if};
   end {SelectSheet};
 
-procedure ReadAndSetHeader( _idx: integer );
+procedure SetColNames(_colNames: pSExp);
   var
-    headername: pSExp;
+    i: integer;
   begin
-    headername:= riProtect( riAllocVector( setStrSxp, 1 ));
-    riSetStringElt( headername, 0, riMkChar(
-        pChar(VarAsString( reader.CellValue[_idx, 1], '' )) ) );
-    riUnprotect( 1 );
-  end {SetHeader};
+    if riIsLogical( _colNames ) then begin
+      hasColNames:= riLogical( _colNames )[0] <> 0;
+      SetLength( colNames, 0 );
+    end else if riIsString( _colNames ) then begin
+      SetLength( colNames, riLength( _colNames ) );
+      for i := 0 to riLength( _colNames ) - 1 do begin
+        colNames[i]:= string(riChar( riStringElt( _colNames, i ) ));
+      end;
+      hasColNames:= Length( colNames ) > 0;
+    end else begin
+      raise ExlsReadWrite.Create('SetColNames: "colNames" must be of type logical or string');
+    end {if colHeader};
+  end;
 
 procedure ReadColNames( _idx: integer );
   var
     i: integer;
   begin
+    if hasColNames and (Length( colNames ) > 0) then begin
+      if Length( colNames ) <> colcnt then begin
+        raise EXlsReadWrite.CreateFmt( 'colNames must be a vector of ' +
+          'equal length than the column count (length: %d/colcnt: %d)',
+          [Length( colNames ), colCnt] );
+      end;
+      Exit;
+    end;
     SetLength( colnames, colcnt );
     for i:= 0 to colcnt - 1 do begin
       if hasColNames then begin
@@ -83,7 +99,7 @@ procedure ReadColNames( _idx: integer );
     end;
   end {SetColNames};
 
-procedure SetColNames(_idx: integer);
+procedure ApplyColNames(_idx: integer);
   var
     dim, col: pSExp;
     i: integer;
@@ -158,21 +174,105 @@ function ReadString(): pSExp; cdecl;
 function ReadDataframe(): pSExp; cdecl;
   var
     coltypes: array of aSExpType;
-    r, c: integer;
+    hasColClasses: boolean;
+    firstColAsRowName: boolean;
+
+    { it's a bit a hack but I don't have the nice classes
+      from pro and don't want to change too many things }
+  procedure SetColClasses(_colClasses: pSExp);
+
+    function StrToColType( const _type: string ): aSExpType;
+      begin
+        if _type = 'double' then begin
+          result:= setRealSxp;
+        end else if _type = 'integer' then begin
+          result:= setIntSxp;
+        end else if _type = 'logical' then begin
+          result:= setLglSxp;
+        end else if (_type = 'character') or (_type = 'factor') then begin
+          result:= setStrSxp;
+        end else if _type = 'rowname' then begin
+          result:= setRawSxp;  // misuse !!
+        end else if _type = 'NA' then begin
+          result:= setNilSxp;  // 1st try to find a type, 2nd use RNaInt
+        end else begin
+          raise EXlsReadWrite.CreateFmt( '"%s" is not a valid colClasses entry ' +
+              '(use double, integer, logical, character, factor or NA)', [_type] );
+        end;
+      end {StrToColType};
+
+    var
+      i: integer;
+    begin {SetColClasses}
+
+        { check if is NA scalar }
+      if (riLength( _colClasses ) = 1) and
+         (riTypeOf( _colClasses ) in [setLglSxp, setRealSxp]) and
+         (rIsNa( riReal( riCoerceVector( _colClasses, setRealSxp ) )[0] ) <> 0)
+      then begin
+        hasColClasses:= False;
+      end else begin
+
+        if riIsString(_colClasses) then begin
+          hasColClasses:= True;
+          SetLength( coltypes, colcnt );
+            { scalar }
+          if riLength( _colClasses ) = 1 then begin
+            if string(riChar( riStringElt( _colClasses, 0 ) )) = 'rowname' then begin
+              raise EXlsReadWrite.Create( '"rowname" may not be used for a scalar colClasses argument' );
+            end;
+            for i:= 0 to colcnt - 1 do begin
+              coltypes[i]:= StrToColType( string(riChar( riStringElt( _colClasses, 0 ) )) );
+            end;
+            { vector }
+          end else if riLength( _colClasses ) = colCnt then begin
+            for i:= 0 to colcnt - 1 do begin
+              coltypes[i]:= StrToColType( string(riChar( riStringElt( _colClasses, i ) )) );
+            end;
+          end else begin
+            raise EXlsReadWrite.CreateFmt( 'colClasses must be a scalar or a vector of ' +
+              'equal length than the column count (length: %d/colcnt: %d)',
+              [riLength( _colClasses ), colCnt] );
+          end;
+        end else begin
+           raise ExlsReadWrite.Create( 'colClasses must be NA or a string (vector)' );
+        end {if};
+      end;
+    end {SetColClasses};
+
+  var
+    r, c, i: integer;
     v: variant;
     myrownames, myclass, mynames: pSExp;
     tempname: string;
-    firstColAsRowName: boolean;
-  begin
-      { first column is used as rowname if
-        - there are column header, - the first columnheader is empty and
-        - first value in the first column is *not* the string '1' }
-    firstColAsRowName:= hasColNames and (colnames[0] = '') and
-        VarIsStr( reader.CellValue[1 + offsetRow, 1] ) and
-        (reader.CellValue[1 + offsetRow, 1] <> '1');
 
-    SetLength( coltypes, colcnt - integer(firstColAsRowName) );
-    result:= riProtect( riAllocVector( setVecSxp, colcnt - integer(firstColAsRowName)) );
+  begin {ReadDataframe}
+    SetLength( coltypes, 0 );
+    SetColClasses( _colClasses );
+
+      { support rowname }
+    if hasColClasses then begin
+        { check in colClasses }
+      assert( Length( coltypes ) > 0, 'ReadDataframe: coltypes must be longer than zero' );
+      firstColAsRowName:= coltypes[0] = setRawSxp;
+      if firstColAsRowName then coltypes:= Copy( coltypes, 1, Length( coltypes ) - 1 );
+        { rowname must be at the beginning }
+      for i:= 0 to Length( coltypes ) - 1 do if coltypes[i] = setRawSxp then begin
+        raise ExlsReadWrite.Create( '"rownames" can only be indicated at the first position in colClasses' );
+      end;
+    end else begin
+      { check for autorow-column: -there are column header, - the first columnheader
+        is empty and - first value in the first column is *not* the string '1' }
+      firstColAsRowName:= hasColNames and (colnames[0] = '') and
+          (length( colnames ) > 1) and
+          VarIsStr( reader.CellValue[1 + offsetRow, 1] ) and
+          (reader.CellValue[1 + offsetRow, 1] <> '1');
+      SetLength( coltypes, colcnt - integer(firstColAsRowName) );
+      for i:= 0 to Length( coltypes ) - 1 do coltypes[i]:= setNilSxp;
+    end {if};
+
+      { allocate }
+    result:= riProtect( riAllocVector( setVecSxp, colcnt - integer(firstColAsRowName) ) );
     mynames:= riProtect( riAllocVector( setStrSxp, colcnt - integer(firstColAsRowName) ) );
     myrownames:= riProtect( riAllocVector( setStrSxp, rowcnt ) );
 
@@ -180,52 +280,67 @@ function ReadDataframe(): pSExp; cdecl;
 
     for c:= 0 to colcnt - 1 - integer(firstColAsRowName) do begin
 
-      v:= reader.CellValue[1 + offsetRow, c + 1 + integer(firstColAsRowName)];
-      case VarType( v ) of
-        varSmallint,
-        varInteger,
-        varShortInt,
-        varByte,
-        varWord,
-        varLongWord,
-        varInt64: begin
-          coltypes[c]:= setIntSxp;
-          riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
-        end;
-        varSingle,
-        varDouble,
-        varCurrency: begin
-          coltypes[c]:= setRealSxp;
-          riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
-        end;
-        varDate: begin
-          coltypes[c]:= setCplxSxp; // WARNING: misuse of setCplxSxp !!!
-          riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
-        end;
-        varBoolean: begin
-          coltypes[c]:= setLglSxp;
-          riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
-        end;
-        varOleStr,
-        varString: begin
-          coltypes[c]:= setStrSxp;
-          riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
-        end;
+      if coltypes[c] <> setNilSxp then begin
+
+          { type already determined }
+        case coltypes[c] of
+          setRealSxp:    riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+          setIntSxp:     riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
+          setLglSxp:     riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+          setStrSxp:     riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
         else
-          tempname:= '';
-          for r:= 0 to colcnt - 1 do tempname:= tempname + ', "' + colnames[r] + '"';
-          if Length( tempname ) > 2 then Delete( tempname, 1, 2 );
-          rWarning( pChar('Could not determine a column type.' + #13#10 +
-              'The first data row *must* have valid entries for all columns. Infos:' + #13#10 +
-              '- colCnt: ' + IntToStr( colcnt ) + ', rowCnt: ' + IntToStr( rowcnt ) + ', ' +
-              'rowIdx of data row: ' + IntToStr( 0 + offsetRow + 1 ) + ', variant type of value: "' + VarTypeAsText( VarType( v ) ) + '"' + #13#10 +
-              '- colHeaders: ' + tempname + ')' + #13#10 +
-              '- colIdx: ' + IntToStr( c + 1 )  + #13#10 +
-              '"LOGICAL" will be assumed and all values will be NA' + #13#10 +
-              '(Maybe it works if you delete the superfluous columns (not only the cell content))' + #13#10#13#10 ));
-          coltypes[c]:= setNilSxp;
-          riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
-      end {case};
+          assert( False, 'coltype not supported (bug)' );
+        end {case};
+      end else begin
+
+          { read row and determine type }
+        v:= reader.CellValue[1 + offsetRow, c + 1 + integer(firstColAsRowName)];
+        case VarType( v ) of
+          varSmallint,
+          varInteger,
+          varShortInt,
+          varByte,
+          varWord,
+          varLongWord,
+          varInt64: begin
+            coltypes[c]:= setIntSxp;
+            riSetVectorElt( result, c, riAllocVector( setIntSxp, rowcnt ) );
+          end;
+          varSingle,
+          varDouble,
+          varCurrency: begin
+            coltypes[c]:= setRealSxp;
+            riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+          end;
+          varDate: begin
+            coltypes[c]:= setCplxSxp; // WARNING: misuse of setCplxSxp !!!
+            riSetVectorElt( result, c, riAllocVector( setRealSxp, rowcnt ) );
+          end;
+          varBoolean: begin
+            coltypes[c]:= setLglSxp;
+            riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+          end;
+          varOleStr,
+          varString: begin
+            coltypes[c]:= setStrSxp;
+            riSetVectorElt( result, c, riAllocVector( setStrSxp, rowcnt ) );
+          end;
+          else
+            tempname:= '';
+            for r:= 0 to colcnt - 1 do tempname:= tempname + ', "' + colnames[r] + '"';
+            if Length( tempname ) > 2 then Delete( tempname, 1, 2 );
+            rWarning( pChar('Could not determine a column type.' + #13#10 +
+                'The first data row *must* have valid entries for all columns. Infos:' + #13#10 +
+                '- colCnt: ' + IntToStr( colcnt ) + ', rowCnt: ' + IntToStr( rowcnt ) + ', ' +
+                'rowIdx of data row: ' + IntToStr( 0 + offsetRow + 1 ) + ', variant type of value: "' + VarTypeAsText( VarType( v ) ) + '"' + #13#10 +
+                '- colHeaders: ' + tempname + ')' + #13#10 +
+                '- colIdx: ' + IntToStr( c + 1 )  + #13#10 +
+                '"LOGICAL" will be assumed and all values will be NA' + #13#10 +
+                '(Maybe it works if you delete the superfluous columns (not only the cell content))' + #13#10#13#10 ));
+            coltypes[c]:= setNilSxp;  // riLogical and RNaInt will be used;
+            riSetVectorElt( result, c, riAllocVector( setLglSxp, rowcnt ) );
+        end {case};
+      end {if};
 
         { set mynames (colnames) }
       tempname:= colnames[c + integer(firstColAsRowName)];
@@ -254,7 +369,7 @@ function ReadDataframe(): pSExp; cdecl;
           setStrSxp: begin
             riSetStringElt( riVectorElt( result, c ), r, riMkChar(pChar(VarAsString(
                 reader.CellValue[r + 1 + offsetRow, c + 1 + integer(firstColAsRowName)], '' )) ) );
-          end;      
+          end;
           setNilSxp: begin
             riLogical( riVectorElt( result, c ) )[r]:= RNaInt;
           end;
@@ -283,12 +398,12 @@ function ReadDataframe(): pSExp; cdecl;
 
   var
     outputtype: aOutputType;
-    skipLines: integer;
   begin {ReadXls}
     result:= RNilValue;
+    SetLength( colnames, 0 );
     try
-      hasColNames:= riLogical( _colNames )[0] <> 0;
-      skipLines:= riInteger( riCoerceVector( _skipLines, setIntSxp ) )[0];
+      offsetRow:= riInteger( riCoerceVector( _skipLines, setIntSxp ) )[0];
+      SetColNames( _colNames );
 
         { create reader }
       reader:= TFlexCelImport.Create();
@@ -299,14 +414,13 @@ function ReadDataframe(): pSExp; cdecl;
         SelectSheet();
 
           { counts and offsets }
-        offsetRow:= skipLines;
         rowcnt:= reader.MaxRow;
         colcnt:= reader.MaxCol;
-        if hasColNames then Inc( offsetRow );
+        if hasColNames and (Length( colnames ) = 0) then Inc( offsetRow );
         rowcnt:= rowcnt - offsetRow;
 
           { read column header (empty if not hasColNames ) }
-        ReadColNames( skiplines + 1 );
+        ReadColNames( offsetRow );
 
           { read matrix }
         outputtype:= otUndefined;
@@ -331,7 +445,7 @@ function ReadDataframe(): pSExp; cdecl;
           { header and column header }
         if result <> RNilValue then begin
           if (outputtype <> otDataFrame) and hasColNames then begin
-            SetColNames( skiplines + 1 );
+            ApplyColNames( offsetRow );
           end;
         end {if};
 
@@ -348,5 +462,6 @@ function ReadDataframe(): pSExp; cdecl;
       end;
     end {try};
   end {ReadXls};
+
 
 end {xlsRead}.

@@ -8,13 +8,13 @@
 }
 
 \usage{
-write.xls( x, file, colNames = TRUE, sheet = 1, from = 1 )
+  write.xls( x, file, colNames = TRUE, sheet = 1, from = 1 )
 }
 
 \arguments{
   \item{x}{a data.frame, a matrix or a vector of the types double, integer,
     logical or character.}
-  \item{file}{the name of the file}
+  \item{file}{the name of a local file}
   \item{sheet}{to write into. Either a number (starting from 1) or a character
     string naming the sheet. If no sheet with this name is found, a new one will
     be inserted at the first position.}
@@ -31,20 +31,19 @@ write.xls( x, file, colNames = TRUE, sheet = 1, from = 1 )
   (normally R\_HOME/library/xlsReadWrite/libs).
 
   For data.frames there is an auto-row feature: if the first entry in rownames
-  is \emph{not} "1" a rowname-column will be written in Excel.
+  is \emph{not} "1", a rowname-column will be written in Excel.
 }
 
 \section{Pro version}{
-  Besides the free open source version there is a shareware version which
-  is formally supported and offers some more features, e.g.:\code{xls.sheet}:
-  insert, delete, rename and select sheets, \bold{directly address} sectors (columns,
-  rows or \bold{cells}) in Excel, \code{xls.open} and \code{xls.close} keep the
-  connection in memory and avoid the overhead to re-read the whole file for
-  subsequent actions. \code{colClasses} supports classes and rownames.
+  There is/will be a Pro version which is formally supported and has some more
+  functionality, e.g. sheet handling (insert, copyAndInsert, select, delete and
+  rename), select Excel regions (columns, rows, cells) directly, append data,
+  work with multiple files at the same time, information about an Excelfile and
+  last but not least an oledatetime class and lots of datetime functions (BETA).
 
-  Why not check out xlsReadWritePro? It's free to try and - besides
-  donations (hint, hint...) - also a good way to support my work.
-  Infos, updates, bugfixes etc, see: http://treetron.googlepages.com
+  Why not check it out? xlsReadWritePro is free to try and most probably will
+  serve you well (it surely does so here for our work!). Further infos, updates,
+  bugfixes and support, please see: http://treetron.googlepages.com.
 }
 
 \author{Hans-Peter Suter}

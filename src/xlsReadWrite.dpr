@@ -32,16 +32,14 @@ const
     'xlsReadWrite version @version@ (Build @build@)' + #13#10 +
     'Copyright (C) 2006, Hans-Peter Suter, Treetron, Switzerland.' + #13#10 +
     '' + #13#10 +
-
-    'Open source edition with ABSOLUTELY NO GUARANTEE at all.' + #13#10 +
-    '(GPLv2 with exception to allow linking a third party library). ' + #13#10 +
+    'This package can be freely distributed and used for any' + #13#10 +
+    'purpose. It comes with ABSOLUTELY NO GUARANTEE at all.' + #13#10 +
+    'Code written by myself is licensed under GPLv2 with an ' + #13#10 +
+    'exception to link certain proprietary code. See LICENSE.' + #13#10 +
     '' + #13#10 +
-
-    'While this version covers the basics just fine, there exists' + #13#10 +
-    'a more powerfull and formally supported PRO version. Check it out!!' + #13#10 +
-    'It''s not only great, but also (besides donations) contributes' + #13#10 +
-    'to my work. Info/updates/etc: http://treetron.googlepages.com.' + #13#10#13#10;
-
+    'Kindly travel to http://treetron.googlepages.com for' + #13#10 +
+    'infos, updates, the pro version, suggestions, support' + #13#10 +
+    'and YES, why not make a donation if it serves you well...' + #13#10#13#10;
 
 procedure MyDllProc( _reason: integer );
   var
@@ -80,4 +78,4 @@ exports R_unload_xlsReadWrite;
 begin {InitializeDemo}
   DllProcNext:= pointer( InterlockedExchange( integer(@DllProc), integer(@MyDllProc) ));
   MyDllProc( DLL_PROCESS_ATTACH );
-end {RMarex}.
+end {xlsReadWrite}.

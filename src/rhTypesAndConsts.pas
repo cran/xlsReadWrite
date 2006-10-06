@@ -3,11 +3,6 @@ unit rhTypesAndConsts;
 { Pascal (Delphi) translation of some common stuff (types and constants)
   of the R headerfiles.
                               ---
-  R is a computer language for statistical data analysis and is published
-  under the GPL, the above-mentioned headerfile is distributed under LGPL.
-  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
-  Copyright (C) 1999-2006   The R Development Core Team.
-                              ---
   The contents of this file may be used under the terms of the GNU General 
   Public License Version 2 (the "GPL"). As a special exception I (copyright 
   holder) allow to link against flexcel (http://www.tmssoftware.com/flexcel.htm).

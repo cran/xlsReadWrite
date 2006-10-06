@@ -1,59 +1,71 @@
 
-================================================================================
-Remarks on license, technical details, uninstallation and contact address.
-================================================================================
+--------------------------------------------------------------------------------
+Compile from sources, technical details and contact address.
+--------------------------------------------------------------------------------
 
 
-=================
-License things
+-- COMPILE FROM SOURCE
 
-xlsReadWrite is published under GPLv2 with an exception to link the non-free 
-component library Flexcel. This exception makes, that the package as a whole is 
-not GPL. To compile for yourself you have to buy the Flexcel code, but then, on 
-your own you go...
+DELPHI
+As you probably know, this package is written in Delphi (PASCAL). If you don't 
+have Delphi you can download it from http://www.turboexplorer.com. These brandnew 
+and free (wow!!) Turbos are almost* identical to the BDS version which I use.
+(*you cannot install third party components in the IDE, this is not relevant here)
 
-xlsReadWrite*Pro* is a shareware package. To use it (after a trial period) you
-are obliged to register it for a (small) fee. While the source code is not
-generally available, it can be licensed also. Just ask.
+LICENSE
+My own code is licensed under GPLv2 with an exception to allow you to link the 
+non-free component library Flexcel (see inst/License). In order to compile the
+xlsReadWrite.dll from source you need a developer license of this libray. It 
+costs € 75.- (for the VCL version) and is available here: http://www.tmssoftware.com/.
+I have no connection with this company apart from being a customer.
 
-Both packages are (from an R POV) non-free non-standard packages. They interface
-R through LGPL'ed header files only and are in line with the explicit statement
-that non-free packages can exist and are tolerated (though not encouraged).
-
-
-=================
-Technical details
-
-Well, I am quite proud to tell, that these packages have been made with Delphi
-(a Pascal dialect) and not with the usual languages C (or C++ or Fortran).
-The Delphi-R interface is a separate project which is fully GPLv2 licensed and
-can be downloaded (RHeaders4Delphi.zip) on the treetron.googlepages website.
-
-My experience shows that it is easy to use Delphi in conjunction with R.
-The big problem however is, that Delphi doesn't have crossplatform support.
-It could be addressed with the FreePascal compiler, which I tried out for
-2 days and had some partial success. But as I currently don't have a personal
-need to read Excelfiles on the Linux platform this has to wait. If someone
-is interested in this and ready to commission such a development, please ask.
-I certainly would be interested to make this library a crossplatform thing.
-
-
-=================
-Uninstall xlsReadWrite*Pro*
-
-To uninstall xlsReadWritePro just delete the folder <R_HOME>/library/xlsReadWritePro. 
-There is an entry (HKCU\Software\Classes\CLSID\{BC056A6C-8CAD-4F9D-9523-44611EB835F7) 
-in the registry which is used for the trial period. You can leave it there (it doesn't 
-do any harm) or you can delete this key manually with the regedit tool. The entry does
-contain a subfolder "Info" with (normally) 3 Keys (D1, D2, D3). Check if this is correct
-and don't delete the key if not. WARNING: only use the regedit tool and/or modify the 
-registry if you know how this works, inappropriate use can damage your system.
+CHANGES
+In Flexcel I made the following (small) changes:
+- TFlexCelImport and TXLSAdapter are derived from TObject instead of TComponent.
+  (Change this and also adapt the correspondending Create methods).
+- In the unit UXlsSST, line 560, I added the line
+  "if aSSTRecord.Count > 0 then  // line added by chappi"
+  before "for i:=0 to aSSTRecord.Count-1 do" to avoid a range check error
+- In the unit UXlsCellRecords, I surrounded the line 205 as follow:
+  {$R-}  // chappi, avoid a range check error.
+    pd^:= Rk^ and $fffffffc;
+  {$R+}  // chappi
+  [This is probably ok, but if ever there should be strange errors, check this...]
+- In the unit UXlsXF, I surrounded the line 388 as follow:
+  {$R-}  // chappi, avoid a range check error.
+  Result:=(GetLongWord(Data, aPos) shr FirstBit) and $7F-7;
+  {$R+}  // chappi
+  [This is probably ok, but if ever there should be strange errors, check this...]
+- Flexcel has quite a lot of different folders. I just copied all .pas, .inc and
+  .res files in a single folder (set a path to this folder in Delphi).
 
 
-=================
-Contact
+-- TECHNICAL DETAILS
 
-Downloads (temp): http://treetron.googlepages.com/
+To be able to use Delphi for "R-Package-Writing" I had to translate C headers 
+to Pascal. This is a separate project (RHeaders4Delphi) and can be downloaded on 
+the treetron.googlepages website. The code is licensed under GPLv2.
+
+My experience shows that Delphi works very well in conjunction with R. The big 
+problem however is, that Delphi doesn't have crossplatform support.
+
+[Theoretically this can be addressed with the FreePascal compiler. Unfortunatly 
+I only had some small partial success, even if I tried for about 2 days. Now it's
+on hold, as I currently don't have a personal need to read Excelfiles on the Linux 
+platform and am not ready to invest more time in it. If someone is interested to 
+help or is ready to (partly) commission such a development, please ask. It certainly 
+would be great to have a crossplatform version of xlsReadWrite!]
+
+[Another solution would be to use Kylix. If someone has Kylix (and Flexcel) it should
+be possible to compile xlsReadWrite straight away for Linux. (I don't have a Kylix
+license and will maybe consider to build a Linux-Kylix-version if someone sponsors the
+cost of the license (a hefty $249 for a classic (euphemism for eol) product). Kylix only
+supports very old Linux distributions and I won't give guarantees that I will succeed).]
+
+
+-- CONTACT
+
+Info and Downloads: http://treetron.googlepages.com/
 Support: http://groups.google.ch/group/supportR
 Mail: gchappi@gmail.com
 

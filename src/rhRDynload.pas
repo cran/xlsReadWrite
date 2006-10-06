@@ -1,13 +1,8 @@
 unit rhRDynload;
 
-{ Pascal (Delphi) translation of the R headerfile Rdynload.h
+{ Pascal (Delphi) translation of the LGPL'ed R headerfile Rdynload.h
   (https://svn.r-project.org/R/trunk/src/include/R_ext/Rdynload.h). 
   Please see "DemosAndHeaders.txt" for actually used revision.
-                              ---
-  R is a computer language for statistical data analysis and is published
-  under the GPL, the above-mentioned headerfile is distributed under LGPL.
-  Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
-  Copyright (C) 1999-2006   The R Development Core Team.
                               ---
   The contents of this file may be used under the terms of the GNU General 
   Public License Version 2 (the "GPL"). As a special exception I (copyright 

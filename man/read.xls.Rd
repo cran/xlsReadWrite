@@ -8,29 +8,37 @@
 }
 
 \usage{
-read.xls( file, colNames = TRUE, sheet = 1, type = "data.frame", from = 1 )
+  read.xls( file, colNames = TRUE, sheet = 1, type = "data.frame",
+          from = 1, colClasses = NA )
 }
 
 \arguments{
-  \item{file}{the name of the file to read from.}
+  \item{file}{the name of the local file to read from.}
   \item{colNames}{indicates if there is a header row in Excel. Either a logical
-    value or a character vector with user defined column names.}
+    value or a character vector with user defined column names. With \code{TRUE}
+    the argument \code{from} denotes the header row otherwise the first data row.}
   \item{sheet}{to read from. Either a number (starting from 1) or a character
     string naming the sheet.}
   \item{type}{specifies the type of the return value. Either \code{data.frame}
     or the entries \code{double}, \code{integer}, \code{logical} or
-    \code{character} which give back a matrix.}
+    \code{character} which all give back a matrix.}
   \item{from}{specifies the first row to start reading. Depending on the value
     of \code{colNames} this is the header row or the first data row. (Slightly
     different from the pro version where the upper left corner (row/col) can be
     indicated).}
+  \item{colClasses}{A scalar or a vector of classes to be assumed for the
+    columns. Possible values are \code{double}, \code{integer}, \code{logical},
+    \code{character}and \code{factor}. With \code{NA} the default conversion
+    will be used. \code{rowname} can be written for the first column to use
+    it for the rownames (note: this is only possible for the first column).}
 }
 
 \details{
-  For data.frames there is an auto-row feature. Provided the following two
-  conditions are met, a column is taken as the rownames: 1) colNames is TRUE or
-  has values where the first entry is empty and 2) in the Excel table the
-  first entry of the header is empty.
+  For data.frames the first column is taken for the rownames either if the first
+  entry in \code{colClasses} is \code{rowname} or if all of the following
+  conditions are met: - \code{colClasses} is NULL, - colNames is TRUE
+  or a vector where the first entry is empty and - the first entry of the
+  header row in the Excel table is empty.
 }
 
 \value{
@@ -38,16 +46,15 @@ read.xls( file, colNames = TRUE, sheet = 1, type = "data.frame", from = 1 )
 }
 
 \section{Pro version}{
-  Besides the free open source version there is a shareware version which
-  is formally supported and offers some more features, e.g.:\code{xls.sheet}:
-  insert, delete, rename and select sheets, \bold{directly address} sectors (columns,
-  rows or \bold{cells}) in Excel, \code{xls.open} and \code{xls.close} keep the
-  connection in memory and avoid the overhead to re-read the whole file for
-  subsequent actions. \code{colClasses} supports classes and rownames.
-  
-  Why not check out xlsReadWritePro? It's free to try and - besides
-  donations (hint, hint...) - also a good way to support my work.
-  Infos, updates, bugfixes etc, see: http://treetron.googlepages.com
+  There is/will be a Pro version which is formally supported and has some more
+  functionality, e.g. sheet handling (insert, copyAndInsert, select, delete and
+  rename), select Excel regions (columns, rows, cells) directly, append data,
+  work with multiple files at the same time, information about an Excelfile and
+  last but not least an oledatetime class and lots of datetime functions (BETA).
+
+  Why not check it out? xlsReadWritePro is free to try and most probably will
+  serve you well (it surely does so here for our work!). Further infos, updates,
+  bugfixes and support, please see: http://treetron.googlepages.com.
 }
 
 \author{Hans-Peter Suter}
