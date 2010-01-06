@@ -24,18 +24,18 @@ write.xls( x, file,
     spreadsheet.}
   \item{sheet}{to write to. A case sensitive character string or a number.}
   \item{from}{specifies the starting row to write to.}
-  \item{rowNames}{a character vector with the actual row names or \code{TRUE} to 
-    to write row names into the first Excel column.
-    
-    With \code{NA}) the first column will be considered to receive the row names 
-    if the first entry in the character vector or the \code{rownames()} of the data 
-    is \emph{not} \code{1}.}
+  \item{rowNames}{a character vector with the actual row names or a logical. 
+    \code{TRUE} writes the rownames in the first Excel column, with \code{FALSE} 
+    the rownames won't be written. With \code{NA} the first column will be considered
+    to receive the row names under the following three conditions: 1) \code{colNames} 
+    is \code{TRUE} or contains a character vector, 2) there are character rownames 
+    (in the data.frame/matrix) and 3) the first entry thereof is not \code{"1"}.}
 }
 
 \details{
   New files are based on the template \code{TemplateNew.xls} which is located in
-  the same folder as the DLL (R\_HOME/library/xlsReadWrite/libs/xlsReadWrite.dll)
-  or in the application data folder \code{<APPDATA>\\Treetron\\xlsReadWrite}.
+  a subfolder of the DLL (\code{R\_HOME/library/xlsReadWrite/libs/xlsReadWrite.dll/template})
+  or in the application data folder \code{<APPDATA>/Treetron/xlsReadWrite}.
   If both templates exists, the one in the application data folder has priority.
   
   The arguments \code{colNames} and/or \code{colClasses} can optionally include 
@@ -43,22 +43,33 @@ write.xls( x, file,
 }
 
 \section{Pro version}{
-  While the free version should be sufficient for most day-to-day duties, you have 
-  the opportunity to choose a more powerful pro version and at the same time support 
-  our development and maintenance effort. Additional features of xlsReadWritePro: \cr
-  - work with data area subsets, - use (named) ranges and pick individual cells, 
-  - work with sheets (copy, rename, delete), - read/write formula values, 
-  - insert images, - use oleDateTime classes and many datetime helper functions, 
-  - append data to existing files and - work with in-memory objects (e.g. to compose Excel reports). 
-  
-  The trial (http://treetron.googlepages.com) is free and the two versions can 
-  easily be switched and coexist just fine. So, why not check it out for yourself? 
+  See section under \link{read.xls}.
 }
-  
-\author{Hans-Peter Suter}
 
 \seealso{
-  \code{\link{read.xls}}, \code{\link{write.table}}}
- }
+  \code{\link{read.xls}}, \code{\link{write.table}}
+}
+
+\examples{
+\dontrun{
+myval <- data.frame( 
+		Fertility = c(80.2, 83.1, 92.5), 
+  	Agriculture = c(17, 45.1, 39.7), 
+  	Testlogical = c(T,T,F), 
+  	Education = as.integer( c(12, 9, 5) ), 
+  	Catholic = c(9.96, 84.84, 93.4), 
+  	Infant.Mortality = c(22.2, 22.2, 20.2), 
+  	Testcharacter = c("Co", "De", "Fr" ), stringsAsFactors = FALSE )
+write.xls( myval, "mytest.xls" )
+
+mycls <-  c( "double", "double", "logical", "integer", "double", "double", "character" )
+wdata <- read.xls( "mytest.xls", colClasses = mycls )
+rownames(myval) <- as.character(rownames(myval))
+stopifnot( identical( wdata, myval ) )
+
+## there are many more examples under 'inst/RUnitTests/test<xy>.R'
+
+}
+}
 
 \keyword{file}

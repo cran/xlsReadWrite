@@ -80,22 +80,16 @@ isoStrToDateTime( sdate )
 }
 
 \section{Pro version}{
-  While the free version should be sufficient for most day-to-day duties, you have 
-  the opportunity to choose a more powerful pro version and at the same time support 
-  our development and maintenance effort. Additional features of xlsReadWritePro: \cr
-  - work with data area subsets, - use (named) ranges and pick individual cells, 
-  - work with sheets (copy, rename, delete), - read/write formula values, 
-  - insert images, - use oleDateTime classes and many datetime helper functions, 
-  - append data to existing files and - work with in-memory objects (e.g. to compose Excel reports). 
-  
-  The trial (http://treetron.googlepages.com) is free and the two versions can 
-  easily be switched and coexist just fine. So, why not check it out for yourself? 
+  See section under \link{read.xls}.
 }
-
-\author{Hans-Peter Suter}
 
 \seealso{
   \code{\link{read.xls}}, \code{\link{write.xls}}
 }
 
+\examples{
+\dontrun{
+## there are many examples under 'RUnitTests/test<xy>.R'
+}
+}
 \keyword{chron}

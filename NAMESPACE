@@ -1,5 +1,7 @@
-useDynLib( xlsReadWrite )
+useDynLib( xlsReadWrite, .registration = TRUE )
 
-export( read.xls, write.xls, 
+importFrom( tools, md5sum )
+
+export( read.xls, write.xls, xls.getshlib,
         dateTimeToStr, strToDateTime,
         dateTimeToIsoStr, isoStrToDateTime )

@@ -1,2 +1,0 @@
-echo "Package 'xlsReadWrite' is (currently) only intended for Windows."
-exit 1

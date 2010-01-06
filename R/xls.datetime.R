@@ -1,14 +1,13 @@
-
-### oledatetime <-> string conversion
-
 dateTimeToStr <- function( odate, format = "" ) 
 {
   .Call( "DateTimeXls", "xheDateTimeToStr", odate, format )
 }
+
 strToDateTime <- function( sdate ) 
 {
   .Call( "DateTimeXls", "xheStrToDateTime", sdate, "" )
 }
+
 dateTimeToIsoStr <- function( odate, isoformat = "YYYY-MM-DD hh:mm:ss" ) 
 {
   isofmt <- as.integer( switch( isoformat,
@@ -20,6 +19,7 @@ dateTimeToIsoStr <- function( odate, isoformat = "YYYY-MM-DD hh:mm:ss" )
                                 stop( "wrong ISO-8601 format. Allowed are:\n'YYYYMMDD', 'YYYY-MM-DD', 'YYYYMMDDhhmmss', 'YYYY-MM-DD hh:mm:ss' and 'YYYY-MM-DD hh:mm:ss.f'" ) ) )
   .Call( "DateTimeXls", "xheDateTimeToIsoStr", odate, isofmt )
 }
+
 isoStrToDateTime <- function( sdate ) 
 {
   .Call( "DateTimeXls", "xheIsoStrToDateTime", sdate, "" )
