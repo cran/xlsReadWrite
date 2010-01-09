@@ -1,27 +1,28 @@
-xlsReadWrite(Pro) packages for R
+xlsReadWrite[Pro] packages for R
 ================================
 
 . Overview
 . Links and downloads
-. Compiling from source
-. xlsReadWritePro version
+. Tests and compiling
+. xlsReadWritePro and cran version
 . Contact/Feedback
 
 
 OVERVIEW
 --------
 
-xlsReadWrite and xlsReadWritePro are packages to natively read/write/manage Excel
-spreadsheet files. They support the .xls format (BIFF8) and have been tested up to 
-Excel version 2010 (Beta). The test files have been included (see inst/RUnitTests)
-to let you ensure that everything works and to provide more extensive example code.
+xlsReadWrite and xlsReadWritePro are packages which allow to read, write 
+and manage Excel files. Currently supported is the .xls (BIFF8) file format.
+  
+The packages do not have any external dependencies (see brackets of alternatives,
+below). They are fast, have a nice simple interface and 'just work great'.
+On the other side they are - still - windows only, limited in comparison to 
+some alternatives, use 3rd party code and are written in Pascal (not to say that
+this is a bad language... quite the opposite imho, just its not common in the R world). 
 
-The packages do not have external dependencies (see brackets of alternatives, below). 
-They are fast, have a nice simple interface and 'just work'. On the other side they 
-are - still - windows only, use 3rd party code and are written in Pascal (not to say
-that this is a bad language... quite the opposite imho). xlsReadWrite(Pro) is a choice 
-among others: RODBC (drivers), gdata (Perl), RExcel or COM (Excel), dataframes2xls 
-(Python), Apache POI (Java) and working with plain old .csv files. 
+xlsReadWrite[Pro] is one possibility among others: RODBC (drivers), gdata (Perl), 
+RExcel or COM (Excel), dataframes2xls (Python), xlsx (Apache POI, Java) and - of 
+course - working with plain old .csv files. 
 
 It's likely that Linux/Mac support will be added this year and xlsx support should 
 also arrive - but plans may change...
@@ -32,16 +33,29 @@ LINKS AND DOWNLOADS
 
 - General info: 		http://www.swissr.org
 - Bugtracker:  			http://redmine.swissr.org (see login info on www.swissr.org)
+- Source code: 			http://github.com/swissr/xlsreadwrite
 
-- Download listing:	http://dl.dropbox.com/u/2602516/swissrpkg/listing.html
-
-- Source code: 			http://github.com/swissr/xlsreadwrite.git
-
-- (TODO: CRAN link, after cran-version has been submitted)
+- All downloads:		http://dl.dropbox.com/u/2602516/swissrpkg/listing.html
+- CRAN version:			http://cran.r-project.org/web/packages/xlsReadWrite/index.html
 
 
-COMPILING FROM SOURCE
----------------------
+TESTS AND COMPILING
+-------------------
+
+### Tests
+ 
+See the RUnitTests folder for the included test files. They provide many more
+examples and let you check that everything works well on your system:
+
+<code>
+library(RUnit); library(xlsReadWrite)
+  # adapt path
+ruDir <- "C:/Programme/R/R-2.10.1/library/xlsReadWrite/RUnitTests" 
+source( file.path( ruDir, "runner.R" ) )
+runTests( ruDir )
+</code>
+
+### Compiling
 
 The 'Excel-work' is done by Flexcel, a high quality code library from TMS Software 
 (http://www.tmssoftware.com). To compile the package you need a Flexcel license.
@@ -60,8 +74,10 @@ Steps to compile xlsReadWrite:
   - open the Delphi project file, adapt (paths, host application) and press F9...
 
 
-XLSREADWRITEPRO VERSION
------------------------
+XLSREADWRITEPRO AND CRAN VERSION
+--------------------------------
+
+### xlsReadWritePro version
 
 By purchasing xlsReadWritePro you help support our development and maintenance effort. 
 We are grateful that quite some people and companies did, and both, the free and pro
@@ -77,12 +93,25 @@ on your support - to backport features from pro to the free version (if technica
 We started with the free version (which is now finished) and the pro version will follow
 shortly. Please see http://www.swissr.org for current state).
 
+### Cran version
+
+Besides the regular xlsReadWrite package there is a special cran version:
+
+	(copied from the cran version startup message)
+	
+  "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"
+  "(Flexcel, tmssoftware.com) which can only be distributed legally in precompiled,\n"
+  "i.e. binary form. As CRAN 'generally does not accept submissions of precompiled\n"
+  "binaries due to security reasons' we only provide a placeholder and you can\n"
+  "download the binary shlib separately.\n\n";
+
 
 CONTACT/FEEDBACK
 ----------------
 
-The preferred 'communication channel' is the redmine.swissr.org forum. Otherwise you can reach
-me at 'chappi at swissr.org' or - pro version users - also at 'hans-peter.suter at treetron.ch'.
+The preferred 'communication channel' is the redmine.swissr.org forum. Otherwise 
+you can reach me at 'chappi at swissr.org' or - pro version users - also at 
+'hans-peter.suter at treetron.ch'.
 
 
-January 6, 2010   Hans-Peter
+January 9, 2010   Hans-Peter

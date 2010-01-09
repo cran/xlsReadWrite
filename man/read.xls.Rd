@@ -4,7 +4,7 @@
 
 \description{
   Reads an Excelsheet and returns a data.frame or a matrix. 
-  Supported is the BIFF8 file format (Excel 97-2003).
+	Currently supported is the .xls (BIFF8) file format.
 }
 
 \usage{

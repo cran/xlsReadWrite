@@ -17,7 +17,7 @@ const char crmsg[] =
 
 const char cranmsg[] = 
   "!! Your installation contains the cran placeholder shlib (dll/so).\n"
-  "Please get the regular shlib by executing the following command:\n\n"
+  "Please get the regular shlib (420 KB) by executing the following command:\n\n"
   "   xls.getshlib()\n\n"
   "Info, forum, issue tracker and manual download at http://www.swissr.org.\n\n"  
   "BACKGROUND: Our own xlsReadWrite code is free, but we also use proprietary code\n"

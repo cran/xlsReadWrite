@@ -3,8 +3,9 @@
 \title{Write Excelfiles}
 
 \description{
-  Saves a data.frame, matrix or vector as an Excelfile. The supported file format
-  is BIFF8, i.e. Excel 97-2003.
+  Saves a data.frame, matrix or vector as an Excelfile.
+  Currently supported is the .xls (BIFF8) file format.
+
 }
 
 \usage{
