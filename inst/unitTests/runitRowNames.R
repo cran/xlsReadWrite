@@ -62,7 +62,7 @@ test.rowNames.givenEmpty <- function() {
 }
 
 test.rowNames.partlyMissing <- function() {
-    myrow <- c("-", "formula", "3", "4", "logical", "oledate", "integer", "oletime", "oledatetime",
+    myrow <- c("1", "formula", "3", "4", "logical", "oledate", "integer", "oletime", "oledatetime",
                "10", "double", "12", "13", "14", "15", "character/factor", "17")
     rdata <- read.xls(rfile,  sheet = "autoCls", rowNames = TRUE, type = "character", from = 2)
     checkIdentical(rownames(rdata), myrow)
@@ -71,7 +71,7 @@ test.rowNames.partlyMissing <- function() {
 
 ### disallow duplicated rownames
 
-test.rowNames.duplicated <- function() {  # todo: fix in pro
+test.rowNames.duplicated <- function() {
     checkException(rdata <- read.xls(rfile, sheet = "intSht", rowNames = TRUE, type = "integer"), silent = TRUE)
     checkException(rdata <- read.xls(rfile, sheet = "intSht", rowNames = TRUE, type = "data.frame"), silent = TRUE)
 }

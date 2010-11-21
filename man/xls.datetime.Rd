@@ -35,7 +35,7 @@ isoStrToDateTime(sdate)
     The string must contain a valid date and/or time value (in respect to the
     active locale). Names (e.g. days and months) are not supported.
 
-    \code{isoStrToDateTime} and \code{dateTimeToIsoStr} follow the ISO-8601 standard.
+    \code{isoStrToDateTime} and \code{dateTimeToIsoStr} follow the ISO-8601 standard.\cr
 
     The following table lists the supported formatting strings (adapted from Delphi help):
 
@@ -51,7 +51,8 @@ isoStrToDateTime(sdate)
     ee  \tab year in the current period/era as a number with a leading zero.\cr
     g   \tab period/era as an abbreviation.\cr
     gg  \tab period/era as a full name.\cr
-    m   \tab month as a number without a leading zero (1-12). If m immediately follows an h or hh, the minute rather than the month is displayed.\cr
+    m   \tab month as a number without a leading zero (1-12). If m immediately follows an h or hh,\cr
+        \tab the minute rather than the month is displayed.\cr
     mm  \tab month as a number with a leading zero (01-12).\cr
     mmm \tab month as an abbreviation (Jan-Dec) using the ShortMonthNames global variable.\cr
     mmmm    \tab month as a full name (January-December) using LongMonthNames.\cr
@@ -67,9 +68,15 @@ isoStrToDateTime(sdate)
     zzz \tab millisecond with a leading zero (000-999).\cr
     t   \tab time using the format given by ShortTimeFormat.\cr
     tt  \tab time using the format given by LongTimeFormat.\cr
-    am/pm   \tab uses the 12-hour clock for the preceding h or hh specifier, and displays 'am' for any hour before noon, and 'pm' for any hour after noon. The am/pm specifier can use lower, upper, or mixed case, and the result is displayed accordingly.\cr
-    a/p \tab uses the 12-hour clock for the preceding h or hh specifier, and displays 'a' for any hour before noon, and 'p' for any hour after noon. The a/p specifier can use lower, upper, or mixed case, and the result is displayed accordingly.\cr
-    ampm    \tab uses the 12-hour clock for the preceding h or hh specifier, and displays the contents of the TimeAMString global variable for any hour before noon, and the contents of the TimePMString global variable for any hour after noon.\cr
+    am/pm   \tab uses the 12-hour clock for the preceding h or hh specifier, and displays 'am' for any hour\cr
+        \tab before noon, and 'pm' for any hour after noon. The am/pm specifier can use lower, upper, or\cr
+        \tab mixed case, and the result is displayed accordingly.\cr
+    a/p \tab uses the 12-hour clock for the preceding h or hh specifier, and displays 'a' for any hour before\cr
+        \tab noon, and 'p' for any hour after noon. The a/p specifier can use lower, upper, or mixed case,\cr
+        \tab and the result is displayed accordingly.\cr
+    ampm    \tab uses the 12-hour clock for the preceding h or hh specifier, and displays the contents of the\cr
+        \tab TimeAMString global variable for any hour before noon, and the contents of the TimePMString\cr
+        \tab global variable for any hour after noon.\cr
     /   \tab separator character given by the DateSeparator variable.\cr
     :   \tab time separator character given by TimeSeparator.\cr
     'xx'/"xx"\tab characters enclosed in single or double quotes are displayed as-is, and do not affect formatting.
@@ -87,7 +94,7 @@ isoStrToDateTime(sdate)
 \examples{
 # --- only run for regular, i.e. non-cran version
 shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
-                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+  paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
 if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
 # -----------------------------------------------
 

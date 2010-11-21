@@ -120,7 +120,7 @@ test.readWrite.dataFrame.2 <- function() {
                           "AsTime", "AsIsoTime", "IntDateTime", "AsDateTime", "AsIsoDateTime"))
     mycls <- if (isFreeVersion) myclsf else myclsp
 
-    rdata <- read.xls(rfile, sheet = "dateTime", dateTimeAs = "isodatetime", stringsAsFactors = FALSE)
+    rdata <- read.xls(rfile, sheet = "dateTime", dateTime = "isodatetime", stringsAsFactors = FALSE)
     checkIdentical(rdata[3,3], "2005-03-22")
     checkIdentical(rdata[12,7], 0.42353010416666664)
     checkIdentical(dateTimeToStr(rdata[12,10], "hh:mm:ss"), "10:09:53")
@@ -130,6 +130,6 @@ test.readWrite.dataFrame.2 <- function() {
     checkIdentical(sapply(rdata, class), mycls)
 
     write.xls(rdata, wfile)
-    wdata <- read.xls(wfile, dateTimeAs = "isodatetime", stringsAsFactors = FALSE)
+    wdata <- read.xls(wfile, dateTime = "isodatetime", stringsAsFactors = FALSE)
     checkIdentical(wdata, rdata)
 }

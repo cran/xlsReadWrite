@@ -14,7 +14,7 @@ read.xls(file,
          type = "data.frame",
          from = 1,
          rowNames = NA, colClasses = NA, checkNames = TRUE,
-         dateTimeAs = "numeric",
+         dateTime = "numeric",
          naStrings = NA,
          stringsAsFactors = default.stringsAsFactors())
 }
@@ -63,7 +63,7 @@ read.xls(file,
     \item{checkNames}{logical. With \code{TRUE} col- and rownames are guaranteed
         to be syntactically valid variable names, e.g. by prepending an "X" or
         translating invalid characters to "." (\code{\link{make.names}} is being used).}
-    \item{dateTimeAs}{scalar character controlling how Excel date values will be
+    \item{dateTime}{scalar character controlling how Excel date values will be
         interpreted when no explicit colClasses have been given: \code{isodatetime} or
         \code{numeric}. 'isodatetime'  will possibly be shortened to 'isodate' or 'isotime'
         and 'numeric' to 'integer'.}
@@ -87,7 +87,7 @@ read.xls(file,
 }
 
 \section{Pro version}{
-    The pro version is our second attempt and goes further than the free version:
+    The pro version is our second attempt and goes further than the free version:\cr
     + append data to existing files, + work with in-memory objects, e.g. to compose
     Excel reports with multiple sheets, + address confined data areas: rows, cols
     and from, to; (named) ranges and picking from individual cells, + manage sheets
@@ -110,7 +110,7 @@ read.xls(file,
 \examples{
 # --- only run for regular, i.e. non-cran version
 shlib <- system.file("libs", if (nzchar(arch <- .Platform$r_arch)) arch else "",
-                     paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
+  paste("xlsReadWrite", .Platform$dynlib.ext, sep = ""), package = "xlsReadWrite")
 if (file.exists(shlib) && (file.info(shlib)$size > 20000)) {
 # -----------------------------------------------
 

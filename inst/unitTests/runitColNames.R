@@ -150,6 +150,7 @@ test.colNames.only <- function() {
     checkIdentical(as.character(wdata), col)
 }
 
+
 ### colnames with empty vectors/matrix/data.frame
 
 test.colNames.emptyVector <- function() {
@@ -163,7 +164,7 @@ test.colNames.emptyVector <- function() {
     checkTrue(is.null(read.xls(wfile)))
     checkTrue(is.null(read.xls(wfile, type = "double")))
 
-    write.xls(x, wfile, colNames = "myColName")  # todo: fix in pro
+    write.xls(x, wfile, colNames = "myColName")
     checkTrue(is.null(read.xls(wfile)))
     checkTrue(is.null(read.xls(wfile, type = "double")))
 }
@@ -200,7 +201,7 @@ test.colNames.emptyDataFrames <- function() {
     checkTrue(is.null(read.xls(wfile)))
     checkTrue(is.null(read.xls(wfile, type = "double")))
     
-    write.xls(x, wfile, colNames = "custCol")  # todo: fix in pro
+    write.xls(x, wfile, colNames = "custCol")
     checkTrue(is.null(read.xls(wfile)))
     checkTrue(is.null(read.xls(wfile, type = "double")))
 

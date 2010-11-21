@@ -9,6 +9,9 @@
     Using the default command, \code{xls.getshlib()}, should work just
     fine. Every step is documented, i.e. will be printed on the console.
 
+    The file will be downloaded with the \code{download.file} R function and
+    thus follows the option \code{timeout} which defaults to 60 seconds.
+
     There are quite a lot of different versions (shlib, R, (in future) platforms).
     If the correct shlib cannot be found and/or if there are permission issues,
     \code{xls.getshlib} will stop. But you can always download the full regular
@@ -23,7 +26,7 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 }
 
 \arguments{
-    \item{pkgvers}{optional character string to override the default (which is:
+    \item{pkgvers}{optional character string to override the default (which is:\cr
         (\code{packageDescription("xlsReadWrite")$Version})). \option{pkgvers} is 
         used to replace placeholder in dropbox download url.}
     \item{url}{optional character string to indicate a custom url to the zipped file 
@@ -38,18 +41,20 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 }
 
 \details{
-    All shlibs, the regular packages and the source files are available at our swissr
-    dropbox account, most recent versions also at the main site and the source at github. URLs:\cr
-    - \url{http://dl.dropbox.com/u/2602516/swissrpkg/index.html}\cr
-    - \url{http://www.swissr.org}\cr
-    - \url{http://github.com/swissr/xlsreadwrite}).
+    The shlibs and all regular, cran and source packages are available from our
+    swissr dropbox account. The source code is at github and the most recent
+    releases can be downloaded directly from our main site. Links:\itemize{
+        \item \url{http://dl.dropbox.com/u/2602516/swissrpkg/index.html}
+        \item \url{http://github.com/swissr/xlsreadwrite}
+        \item \url{http://www.swissr.org/download}
+    }
 
     Why do you need to download the shlib from an external source? Two (three)
     reasons:\enumerate{
-        \item Our own xlsReadWrite code is free (GPL-2), but we also use
+        \item our own xlsReadWrite code is free (GPL-2), but we also use
             proprietary code (Flexcel, tmssoftware.com) which can only be distributed
             legally in precompiled, i.e. binary form.
-        \item As CRAN \emph{'generally does not accept submissions of precompiled
+        \item as CRAN \emph{'generally does not accept submissions of precompiled
             binaries due to security reasons'} we only provide a placeholder and you
             have to download the binary shlib separately.
         \item xlsReadWrite is written in Pascal and CRAN most probably would not
@@ -68,7 +73,8 @@ xls.getshlib(pkgvers = NA, url = NA, md5 = TRUE,
 }
 
 \seealso{
-    \code{\link{read.xls}}, \code{\link{write.xls}}
+    \code{\link{read.xls}}, \code{\link{write.xls}}, \code{\link{download.file}}
+    and \code{\link{options}} for the timeout.
 }
 
 \examples{\dontrun{

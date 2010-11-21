@@ -1,97 +1,177 @@
 ### setup
 
-idx <- cbind(c(2,4),c(1,2))
+strictNA <- function(x) is.na(x) && !is.nan(x)
 
-naidx <- matrix(TRUE, nrow = 19, ncol = 12)
-naidx[,1:3] <- FALSE; naidx[5,] <- FALSE; naidx[9,5] <- FALSE
+naidx <- rbind(c(2,1))
+nanidx <- rbind(c(4,2))
 
-mymat <- function(mode, nanOrNa, with42 = FALSE) {
-    if (with42) {
-        nanOrNa <- NA
-        res <- do.call(paste("as", mode, sep = "."), list(rep(42, 19*12)))
-        dim(res) <- c(19,12)
-        res[naidx] <- nanOrNa
-    } else {
-        res <- cbind(a = do.call(paste("as", mode, sep = "."), list(1:4)),
-                     b = do.call(paste("as", mode, sep = "."), list(12:15)))
-        res[idx] <- nanOrNa
-    }
-    stopifnot(do.call(paste("is", mode, sep = "."), list(res)))  # afaik only numeric/character works with NaN
+dataidx <- matrix(TRUE, nrow = 19, ncol = 12)
+chidx <- !dataidx
+dataidx[,1:3] <- FALSE; dataidx[5,] <- FALSE; dataidx[9,5:7] <- FALSE;
+chidx[,5:6] <- TRUE; chidx[5,5:6] <- FALSE; chidx[9,5:6] <- FALSE;
+
+databingo <- rbind(c(9, 5))
+datana <- rbind(c(9, 6))
+datanan <- rbind(c(9, 7))
+
+mat <- function(mode) {
+    res <- cbind(a = do.call(paste("as", mode, sep = "."), list(1:4)),
+                 b = do.call(paste("as", mode, sep = "."), list(12:15)))
+    res[naidx] <- NA
+    res[nanidx] <- NaN
     res
 }
 
 
-### NA
+### read write with custom naStrings
 
 test.NaN_NA.readWithNaStrings <- function() {
     rdata <- read.xls(rfile, naStrings = c("NO", "FALSE", "NEIN"), type = "double", sheet = "logSht", from = 3)
-    checkTrue(all(is.na(rdata[c(6,8,11),2])))
+    checkTrue(all(strictNA(rdata[c(6,8,11),2])))
     rdata <- read.xls(rfile, naStrings = c("NO", "FALSE", "NEIN"), type = "integer", sheet = "logSht", from = 3)
-    checkTrue(all(is.na(rdata[c(6,8,11),2])))
+    checkTrue(all(strictNA(rdata[c(6,8,11),2])))
     rdata <- read.xls(rfile, naStrings = c("NO", "FALSE", "NEIN"), type = "logical", sheet = "logSht", from = 3)
-    checkTrue(all(is.na(rdata[c(6,8,11),2])))
+    checkTrue(all(strictNA(rdata[c(6,8,11),2])))
     rdata <- read.xls(rfile, naStrings = c("NO", "FALSE", "NEIN"), type = "character", sheet = "logSht", from = 3)
-    checkTrue(all(is.na(rdata[c(6,8,11),2])))
+    checkTrue(all(strictNA(rdata[c(6,8,11),2])))
+
     rdata <- read.xls(rfile, naStrings = c("NO", "FALSE", "NEIN"), type = "data.frame", sheet = "logSht", from = 3)
-    checkTrue(all(is.na(rdata[c(6,8,11),2])))
+    checkTrue(all(strictNA(rdata[c(6,8,11),2])))
 }
 
 test.NaN_NA.writeWithNaStrings <- function() {
-    write.xls(mymat("double", NA), wfile, naStrings = "hello", colNames = FALSE)
-    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[idx], c("hello", "hello"))
-    write.xls(mymat("integer", NA), wfile, naStrings = "hello", colNames = FALSE)
-    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[idx], c("hello", "hello"))
-    write.xls(mymat("logical", NA), wfile, naStrings = "hello", colNames = FALSE)
-    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[idx], c("hello", "hello"))
-    write.xls(mymat("character", NA), wfile, naStrings = "hello", colNames = FALSE)
-    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[idx], c("hello", "hello"))
-    write.xls(data.frame(mymat("double", NA)), wfile, naStrings = "hello", colNames = FALSE)
-    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[idx], c("hello", "hello"))
+    write.xls(mat("double"), wfile, naStrings = "hello", colNames = FALSE)
+    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
+    write.xls(mat("integer"), wfile, naStrings = "hello", colNames = FALSE)
+    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
+    write.xls(mat("logical"), wfile, naStrings = "hello", colNames = FALSE)
+    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
+    write.xls(mat("character"), wfile, naStrings = "hello", colNames = FALSE)
+    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
+
+    write.xls(data.frame(mat("double")), wfile, naStrings = "hello", colNames = FALSE)
+    checkIdentical(read.xls(wfile, type = "character", colNames = FALSE)[naidx], "hello")
 }    
 
-test.NaN_NA.readNaDefault <- function() {
-    checkTrue(all(is.na(read.xls(rfile, sheet = "intSht", type = "double")[naidx])))
-    checkTrue(all(is.na(read.xls(rfile, sheet = "intSht", type = "integer")[naidx])))
-    checkTrue(all(is.na(read.xls(rfile, sheet = "intSht", type = "logical")[naidx])))
-    checkTrue(all(read.xls(rfile, sheet = "intSht", type = "character")[naidx] == ""))
-    checkTrue(all(is.na(read.xls(rfile, sheet = "intSht", type = "data.frame")[naidx])))
-}    
-    
-test.NaN_NA.writeNaDefault <- function() {
-    write.xls(mymat("double", with42 = TRUE), wfile)
-    checkTrue(all(read.xls(wfile, type = "character")[naidx] == ""))
-    checkTrue(all(read.xls(wfile, type = "character")[!naidx] == "42"))
-    write.xls(mymat("integer", with42 = TRUE), wfile)
-    checkTrue(all(read.xls(wfile, type = "character")[naidx] == ""))
-    checkTrue(all(read.xls(wfile, type = "character")[!naidx] == "42"))
-    write.xls(mymat("logical", with42 = TRUE), wfile)
-    checkTrue(all(read.xls(wfile, type = "character")[naidx] == ""))
-    checkTrue(all(read.xls(wfile, type = "character")[!naidx] == "1"))
-    write.xls(mymat("character", with42 = TRUE), wfile)
-    checkTrue(all(read.xls(wfile, type = "character")[naidx] == ""))
-    checkTrue(all(read.xls(wfile, type = "character")[!naidx] == "42"))
-    write.xls(data.frame(mymat("double", with42 = TRUE)), wfile)
-    checkTrue(all(read.xls(wfile, type = "character")[naidx] == ""))
-    checkTrue(all(read.xls(wfile, type = "character")[!naidx] == "42"))
+test.NaN_NA.writeWithMultipleNaStrings <- function() {
+    checkException(write.xls(mat("double"), wfile, naStrings = c("hello", "world"), colNames = FALSE), silent = TRUE)
 }
 
 
-### NaN
+### read write (including cells picking)
 
-test.NaN_NA.doubleNaN <- function() {
-    write.xls(mymat("double", NaN), wfile, colNames = FALSE)
+test.NaN_NA.double <- function() {
+    write.xls(mat("double"), wfile, colNames = FALSE)
     wdata <- read.xls(wfile, type = "double", colNames = FALSE)
-    checkIdentical(wdata[idx], c(NaN, NaN))
+    checkIdentical(wdata[naidx], as.double(NA))
+    checkIdentical(wdata[nanidx], NaN)
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "double", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], as.double(NA))
+        checkIdentical(wdata[2], NaN)
+    }
 }
 
-test.NaN_NA.characterNaN <- function() {
-    write.xls(mymat("character", NaN), wfile, colNames = FALSE)
+test.NaN_NA.integer <- function() {
+    write.xls(mat("integer"), wfile, colNames = FALSE)
+    wdata <- read.xls(wfile, type = "integer", colNames = FALSE)
+    checkIdentical(wdata[naidx], as.integer(NA))
+    checkIdentical(wdata[nanidx], as.integer(NA))
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "integer", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], as.integer(NA))
+        checkIdentical(wdata[2], as.integer(NA))
+    }
+}
+
+test.NaN_NA.logical <- function() {
+    write.xls(mat("logical"), wfile, colNames = FALSE)
+    wdata <- read.xls(wfile, type = "logical", colNames = FALSE)
+    checkIdentical(wdata[naidx], NA)
+    checkIdentical(wdata[nanidx], NA)
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "logical", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], NA)
+        checkIdentical(wdata[2], NA)
+    }
+}
+
+test.NaN_NA.character <- function() {
+    write.xls(mat("character"), wfile, colNames = FALSE)
     wdata <- read.xls(wfile, type = "character", colNames = FALSE)
-    checkIdentical(wdata[idx], c("NaN", "NaN"))
+    checkIdentical(wdata[naidx], "")
+    checkIdentical(wdata[nanidx], "NaN")
+    if (!isFreeVersion) {
+        wdata <- read.xls(wfile, type = "character", cells = c(naidx, nanidx))
+        checkIdentical(wdata[1], "")
+        checkIdentical(wdata[2], "NaN")
+    }
+
+    write.xls(mat("character"), wfile, colNames = FALSE, naStrings = "NA")
+    wdata <- read.xls(wfile, type = "character", colNames = FALSE, naStrings = "NA")
+    checkIdentical(wdata[naidx], as.character(NA))
+    checkIdentical(wdata[nanidx], "NaN")
 }
 
 test.NaN_NA.frameNaN <- function() {
-    write.xls(data.frame(mymat("double", NaN)), wfile, colNames = FALSE)
+    write.xls(data.frame(mat("double")), wfile, colNames = FALSE)
     wdata <- read.xls(wfile, colNames = FALSE)
-    checkIdentical(wdata[idx], c(NaN, NaN))
+    checkIdentical(wdata[naidx], as.double(NA))
+    checkIdentical(wdata[nanidx], NaN)
+    if (!isFreeVersion) {
+        suppressWarnings(wdata <- read.xls(wfile, cells = c(naidx, nanidx)))
+        checkIdentical(wdata[[1]], NA)
+        checkIdentical(wdata[[2]], NaN)
+    }
+}
+
+
+### read data
+# - we test NA, NaN, empty cells and wrong type
+# - because of 'naString = NA', 'NA' values stays plain strings objects
+# - 'NaN' become always NaN objects
+
+test.NaN_NA.readMatrix <- function() {
+    rdata <- read.xls(rfile, sheet = "intSht", type = "double")
+    checkIdentical(rdata[dataidx], rep(as.numeric(NA), length(rdata[dataidx])))  # empty cells
+    checkIdentical(rdata[databingo], as.double(NA))   # 'bingo' value
+    checkIdentical(rdata[datana], as.double(NA))      # 'NA' value
+    checkIdentical(rdata[datanan], NaN)               # 'NaN' value
+    
+    rdata <- read.xls(rfile, sheet = "intSht", type = "integer")
+    checkIdentical(rdata[dataidx], rep(as.integer(NA), length(rdata[dataidx])))  # empty cells
+    checkIdentical(rdata[databingo], as.integer(NA))  # 'bingo' value
+    checkIdentical(rdata[datana], as.integer(NA))     # 'NA' value
+    checkIdentical(rdata[datanan], as.integer(NA))    # 'NaN' value
+    
+    rdata <- read.xls(rfile, sheet = "intSht", type = "logical")
+    checkIdentical(rdata[dataidx], rep(NA, length(rdata[dataidx])))  # empty cells
+    checkIdentical(rdata[databingo], FALSE)           # 'bingo' value
+    checkIdentical(rdata[datana], FALSE)              # 'NA' value
+    checkIdentical(rdata[datanan], NA)                # 'NaN' value
+    
+    rdata <- read.xls(rfile, sheet = "intSht", type = "character")
+    checkIdentical(rdata[dataidx], rep("", length(rdata[dataidx])))  # empty cells
+    checkIdentical(rdata[databingo], "bingo")         # 'bingo' value
+    checkIdentical(rdata[datana], "NA")               # 'NA' value
+    checkIdentical(rdata[datanan], "NaN")             # 'NaN' value
+}
+
+test.NaN_NA.readFrame <- function() {
+    tmpcls <- c("integer", "integer", "integer", "integer", "character", "character",
+                "numeric", "integer", "integer", "integer", "integer", "integer")
+
+    rdata <- read.xls(rfile, sheet = "intSht", type = "data.frame", stringsAsFactors = FALSE,
+                      colClass = if (isFreeVersion) tmpcls else NA )
+
+    checkIdentical(as.vector(sapply(rdata, class)), tmpcls)  
+
+    checkIdentical(rdata[chidx], rep("", sum(chidx)))
+
+    tmpidx <- !(chidx & dataidx) & dataidx            # empty cells
+    checkIdentical(rdata[tmpidx], rep(as.character(NA), sum(tmpidx)))
+
+    checkTrue(rdata[databingo] == "bingo")            # 'bingo' value
+    checkTrue(rdata[datana] == "NA")                  # 'NA' value
+    checkIdentical(rdata[datanan[1],datanan[2]], NaN) # NaN value (this is a double type column)
 }

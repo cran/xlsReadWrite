@@ -5,12 +5,12 @@ read.xls <- function(
     type = "data.frame",
     from = 1,
     rowNames = NA, colClasses = NA, checkNames = TRUE,
-    dateTimeAs = "numeric",
+    dateTime = "numeric",
     naStrings = NA,
     stringsAsFactors = default.stringsAsFactors())
 {
     res <- .Call("ReadXls", file, colNames, sheet, type, from,
                  rowNames, colClasses, checkNames,
-                 dateTimeAs, naStrings, stringsAsFactors)
+                 dateTime, naStrings, stringsAsFactors)
     res
 }

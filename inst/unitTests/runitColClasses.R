@@ -82,8 +82,8 @@ test.colClasses.autoProgression <- function() {
         # (there's a progression on the pro version but it's too complicated to implement here)
     if (isFreeVersion) {
             # check first row and then...
-        mycls <-    c(rep("numeric", 8), "factor", "logical")
-        mystorage <- c(rep("double", 8), "integer", "logical")
+        mycls <-    c("factor", rep("numeric", 8), "factor", "logical")
+        mystorage <- c("integer", rep("double", 8), "integer", "logical")
         rdata <- suppressWarnings(read.xls(rfile, sheet = "autoCls", from = 2))
         checkIdentical(as.vector(sapply(rdata, function(x) class(x)[1])), mycls)
         checkIdentical(as.vector(sapply(rdata, storage.mode)), mystorage)

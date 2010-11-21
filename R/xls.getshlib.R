@@ -29,11 +29,12 @@ xls.getshlib <- function(
             if (!file.copy(sub("^file://", "", url), fpzip.temp, overwrite = TRUE))
                 stop("copying '", url, "'\nto '", fpzip.temp, "' failed")
         } else {
+            printmsg(paste("  - download.file from '", url, "' (timeout: ", as.character(options("timeout")), ")", sep = ""))
             res <- try(download.file(url, fpzip.temp, method = "internal", quiet = TRUE, mode = "wb"), silent = TRUE)
             if (inherits(res, "try-error") || res != 0)
                 stop("downloading '", url, "'\nto '", fpzip.temp, "' failed")
         }
-        printmsg(paste("  - zipped shlib has been downloaded from '", url, "' to '", fpzip.temp, "'", sep = ""))
+        printmsg(paste("  - zipped shlib downloaded to '", fpzip.temp, "'", sep = ""))
     }
     if (is.na(url)) {
         url <- sub("<os>", os, urltmpl, fixed = TRUE)
