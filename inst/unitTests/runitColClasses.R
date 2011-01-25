@@ -54,12 +54,11 @@ test.colClasses.givenLogicalFactorNA <- function() {
 ### auto-determine colClasses
 
 test.colClasses.auto <- function() {
+    mycls <-    c("numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "character")
+    mystorage <- c("double", "double", "double", "double", "double", "double", "character")
     if (isFreeVersion) {
-      mycls <-    c("numeric", "numeric", "logical", "numeric", "numeric", "numeric", "character")
-      mystorage <- c("double", "double", "logical", "double", "double", "double", "character")
-    } else {
-      mycls <-    c("numeric", "numeric", "integer", "integer", "numeric", "numeric", "character")
-      mystorage <- c("double", "double", "integer", "integer", "double", "double", "character")
+      mycls[3] <- "logical";
+      mystorage[3] <- "logical"
     }
     rdata <- read.xls(rfile, colNames = TRUE, "dfSht", from = 5, stringsAsFactors = FALSE)
     checkIdentical(as.vector(sapply(rdata, class)), mycls)  
@@ -82,13 +81,13 @@ test.colClasses.autoProgression <- function() {
         # (there's a progression on the pro version but it's too complicated to implement here)
     if (isFreeVersion) {
             # check first row and then...
-        mycls <-    c("factor", rep("numeric", 8), "factor", "logical")
-        mystorage <- c("integer", rep("double", 8), "integer", "logical")
+        mycls <-    c("factor", rep("numeric", 7), "factor", "logical")
+        mystorage <- c("integer", rep("double", 7), "integer", "logical")
         rdata <- suppressWarnings(read.xls(rfile, sheet = "autoCls", from = 2))
         checkIdentical(as.vector(sapply(rdata, function(x) class(x)[1])), mycls)
         checkIdentical(as.vector(sapply(rdata, storage.mode)), mystorage)
         # ...loop and check each row of 2nd column separately
-        mycls <- c("double", "double", rep("logical", 3), rep("double", 6), rep("character", 5))
+        mycls <- c("double", "double", rep("logical", 3), rep("double", 5), rep("character", 6))
         for (ro in 3:18) {
             checkIdentical(storage.mode(suppressWarnings(read.xls(
                 rfile, colNames = FALSE, sheet = "autoCls", from = ro, 

@@ -85,8 +85,7 @@ test.readWrite.character <- function() {
 ### data.frame
 
 test.readWrite.dataFrame.1 <- function() {
-    mylogical <- if (isFreeVersion) "logical" else "integer"
-    myinteger <- if (isFreeVersion) "numeric" else "integer"
+    mylogical <- if (isFreeVersion) "logical" else "numeric"
     myval <- data.frame(Fertility = c(80.2, 83.1, 92.5, 85.8, 76.9, 76.1, 83.8, 92.4, 82.4, 82.9, 87.1, 64.1), 
         Agriculture = c(17, 45.1, 39.7, 36.5, 43.5, 35.3, 70.2, 67.8, 53.3, 45.2, 64.5, 62), 
         Testlogical = if (isFreeVersion) c(T, T, F, T, T, F, T, T, F, T, T, F) else 
@@ -95,7 +94,7 @@ test.readWrite.dataFrame.1 <- function() {
         Catholic = c(9.96, 84.84, 93.4, 33.77, 5.16, 90.57, 92.85, 97.16, 97.67, 91.38, 98.61, 8.52), 
         Infant.Mortality = c(22.2, 22.2, 20.2, 20.3, 20.6, 26.6, 23.6, 24.9, 21, 24.4, 24.5, 16.5), 
         Testcharacter = c("Co", "De", "Fr", "Mo", "Ne", "Po", "Br", "Gl", "Gr", "Sa", "Ve", "Ai"), stringsAsFactors = TRUE)
-    mycls <- c("numeric", "numeric", mylogical, myinteger, "numeric", "numeric", "factor")
+    mycls <- c("numeric", "numeric", mylogical, "numeric", "numeric", "numeric", "factor")
 
     rdata <- read.xls(rfile, colNames = TRUE, "dfSht", from = 5)
     checkEquals(rdata, myval, check.attributes = FALSE)
@@ -110,8 +109,8 @@ test.readWrite.dataFrame.1 <- function() {
 }
 
 test.readWrite.dataFrame.2 <- function() {
-    myclsp <- list(IntDate = "integer", AsDate = "character", AsIsoDate = c("isodate", "isodatetime"),
-                  Hour = "integer", Minute = "integer", Sec = "numeric", IntTime = "numeric", AsTime = "character",
+    myclsp <- list(IntDate = "numeric", AsDate = "character", AsIsoDate = c("isodate", "isodatetime"),
+                  Hour = "numeric", Minute = "numeric", Sec = "numeric", IntTime = "numeric", AsTime = "character",
                   AsIsoTime = c("isotime", "isodatetime"), IntDateTime = "numeric",
                   AsDateTime = "isodatetime", AsIsoDateTime = "isodatetime")
     myclsf <- structure(c("numeric", "character", "character", "numeric", "numeric", "numeric", "numeric",

@@ -62,8 +62,8 @@ test.rowNames.givenEmpty <- function() {
 }
 
 test.rowNames.partlyMissing <- function() {
-    myrow <- c("1", "formula", "3", "4", "logical", "oledate", "integer", "oletime", "oledatetime",
-               "10", "double", "12", "13", "14", "15", "character/factor", "17")
+    myrow <- c("1", "formula", "3", "4", "logical", "oledate", "oletime", "oledatetime",
+               "9", "double", "11", "12", "13", "14", "15", "character/factor", "17")
     rdata <- read.xls(rfile,  sheet = "autoCls", rowNames = TRUE, type = "character", from = 2)
     checkIdentical(rownames(rdata), myrow)
 }

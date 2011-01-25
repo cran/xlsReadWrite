@@ -1,8 +1,8 @@
-### execute RUnit tests manually
-#
-# 1. source (or copy/paste) this file
-# 2. copy/paste snippet (below) to execute test(s) in current directory
-# (see adapt block for options (rarely needed for useRs)
+### execute RUnit tests:
+
+#   1. source (or copy/paste) this file
+#   2. use snippet below to execute tests in current directory
+#   (for options see adapt block (rarely needed))
 
 
 ### snippets
@@ -16,7 +16,7 @@ checkSuite()
 checkFile("runitReadWrite.R")
 
 # check the indicated test-function
-checkTest("runitReadWrite.R", fct = "test.readWrite.integer")
+checkFunc("runitReadWrite.R", fct = "test.readWrite.integer")
 
 }
 
@@ -91,7 +91,7 @@ checkFile <- function(fn) {
     .printResults(res, getwd())
 }
 
-checkTest <- function(fn, fct) {
+checkFunc <- function(fn, fct) {
     testfile <- file.path(testdir, fn)
     res <- runTestFile(testfile, testFuncRegexp = paste("^", fct, "$", sep = ""))
     .printResults(res, getwd())

@@ -158,8 +158,7 @@ test.NaN_NA.readMatrix <- function() {
 }
 
 test.NaN_NA.readFrame <- function() {
-    tmpcls <- c("integer", "integer", "integer", "integer", "character", "character",
-                "numeric", "integer", "integer", "integer", "integer", "integer")
+    tmpcls <- c(rep("numeric", 4 ), "character", "character", rep("numeric", 6))
 
     rdata <- read.xls(rfile, sheet = "intSht", type = "data.frame", stringsAsFactors = FALSE,
                       colClass = if (isFreeVersion) tmpcls else NA )

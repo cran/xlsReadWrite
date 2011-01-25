@@ -85,7 +85,7 @@
     You can easily run the tests on your system, the RUnit test files are located
     at:\itemize{
         \item \code{R_HOME/library/xlsReadWrite/unitTest/runit*.R}
-        \item \code{R_HOME/library/xlsReadWrite/unitTest/execManually.R} (exec details)
+        \item \code{R_HOME/library/xlsReadWrite/unitTest/_manual_execution.R}
     }
 }
 
@@ -131,7 +131,7 @@
         Forum:         \tab \tab  \url{http://dev.swissr.org/projects/xlsReadWrite/boards}\cr
         Email:         \tab \tab  support at swissr.org\cr
     }
-    November 21, 2010 / Hans-Peter
+    January 25, 2011 / Hans-Peter
 }
 
 \keyword{package}
